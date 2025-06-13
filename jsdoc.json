@@ -1,0 +1,20 @@
+{
+  "plugins": [],
+  "source": {
+    "include": "src",
+    "includePattern": "ContactRequest.ts",
+    "excludePattern": "(node_modules|docs)"
+  },
+  "tags": {
+    "allowUnknownTags": true,
+    "dictionaries": ["jsdoc", "closure"]
+  },
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": false
+  },
+  "opts": {
+    "recurse": true,
+    "destination": "./docs"
+  }
+}
