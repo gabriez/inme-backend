@@ -5,6 +5,11 @@ import { Roles } from "@/database/entities/Roles";
 import { Users } from "@/database/entities/Users";
 
 import { DB } from "@/constants";
+import { Historial } from "./entities/Historial";
+import { Products } from "./entities/Products";
+import { Providers } from "./entities/Providers";
+import { ProductionOrders } from "./entities/ProductionOrders";
+import { Client } from "./entities/Client";
 
 const databaseConfig: DataSourceOptions = {
 	type: "postgres",
@@ -18,5 +23,13 @@ const databaseConfig: DataSourceOptions = {
 
 export const dataSourceOptionsCommon: DataSourceOptions = {
 	...databaseConfig,
-	entities: [Roles, Users],
+	entities: [
+		Roles,
+		Users,
+		Historial,
+		Products,
+		Providers,
+		ProductionOrders,
+		Client,
+	],
 };
