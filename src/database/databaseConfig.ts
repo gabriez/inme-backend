@@ -1,13 +1,13 @@
-import type { DataSourceOptions } from 'typeorm';
+import type { DataSourceOptions } from "typeorm";
 
 /* entities */
-import { Roles } from '@/database/entities/Roles';
-import { Users } from '@/database/entities/Users';
+import { Roles } from "@/database/entities/Roles";
+import { Users } from "@/database/entities/Users";
 
-import { DB } from '@/constants';
+import { DB } from "@/constants";
 
 const databaseConfig: DataSourceOptions = {
-	type: 'mysql',
+	type: "postgres",
 	host: DB.host,
 	port: DB.port,
 	username: DB.user,
