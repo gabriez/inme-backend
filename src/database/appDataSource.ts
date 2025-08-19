@@ -1,13 +1,13 @@
-import { DataSource } from 'typeorm';
+import { DataSource } from "typeorm";
 
-import { dataSourceOptionsCommon } from './databaseConfig';
+import { dataSourceOptionsCommon } from "./databaseConfig";
 /* migrations */
-import { CoreSchema1649955218198 } from './migrations/1649955218198-CoreSchema';
+import { InmeStart1755574936345 } from "./migrations/1755574936345-inme-start";
 
 const AppDataSource = new DataSource({
 	...dataSourceOptionsCommon,
 	logging: false,
-	migrations: [CoreSchema1649955218198],
+	migrations: [InmeStart1755574936345],
 });
 
 export default AppDataSource;
