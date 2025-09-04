@@ -114,8 +114,12 @@ export const authRoutes = (): Router => {
 	 *        content:
 	 *          text/plain; charset=utf-8:
 	 *            schema:
-	 *              type: string
-	 *            example: "Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde"
+	 *              type: object
+	 *              $ref: '#/components/schemas/GenericResponseSchema'
+	 *            example:
+	 *              message: "Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde"
+	 *              status: false
+	 *              data: null
 	 */
 	routerRoot.post("/signup", [signUpRule], signUp);
 
