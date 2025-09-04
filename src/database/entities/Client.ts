@@ -30,6 +30,7 @@ export class Client extends CoreEntity {
 	@Column({
 		type: "varchar",
 		length: 150,
+		unique: true,
 	})
 	email: string;
 

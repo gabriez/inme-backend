@@ -1,24 +1,31 @@
-import bcrypt from 'bcryptjs';
-import { BeforeInsert, Column, Entity, JoinTable, ManyToMany } from 'typeorm';
+import bcrypt from "bcryptjs";
+import { BeforeInsert, Column, Entity, JoinTable, ManyToMany } from "typeorm";
 
-import { CoreEntity } from './CoreEntity';
-import { Roles } from './Roles';
+import { CoreEntity } from "./CoreEntity";
+import { Roles } from "./Roles";
 
 @Entity()
 export class Users extends CoreEntity {
 	@Column({
 		length: 50,
 		nullable: true,
-		type: 'varchar',
+		type: "varchar",
 	})
 	name: string;
 
 	@Column({
 		length: 50,
 		unique: true,
-		type: 'varchar',
+		type: "varchar",
 	})
 	username: string;
+
+	@Column({
+		type: "varchar",
+		length: 150,
+		unique: true,
+	})
+	email: string;
 
 	@ManyToMany(() => Roles, {
 		eager: true,
@@ -27,7 +34,7 @@ export class Users extends CoreEntity {
 	rol: Roles[];
 
 	@Column({
-		type: 'varchar',
+		type: "varchar",
 		length: 150,
 	})
 	password: string;
