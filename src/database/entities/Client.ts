@@ -7,7 +7,7 @@ export class Client extends CoreEntity {
 		length: 70,
 		type: "varchar",
 	})
-	nombre: string;
+	nombreContacto: string;
 
 	@Column({
 		length: 50,
@@ -30,13 +30,24 @@ export class Client extends CoreEntity {
 	@Column({
 		type: "varchar",
 		length: 150,
-		unique: true,
 	})
-	email: string;
-
+	emailEmpresa: string;
 	@Column({
 		type: "varchar",
 		length: 150,
 	})
+	emailContacto: string;
+	@Column({
+		type: "varchar",
+		length: 150,
+		unique: true,
+	})
 	ciRif: string;
+
+	@Column({
+		type: "varchar",
+		length: 150,
+		unique: true,
+	})
+	direccionFiscal: string;
 }
