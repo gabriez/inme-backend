@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CoreSchema1757275174123 implements MigrationInterface {
-    name = 'CoreSchema1757275174123'
+export class CoreSchema1757306852147 implements MigrationInterface {
+    name = 'CoreSchema1757306852147'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -55,15 +55,13 @@ export class CoreSchema1757275174123 implements MigrationInterface {
                 "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
                 "deleted_at" TIMESTAMP,
                 "nombreContacto" character varying(70) NOT NULL,
-                "nombreEmpresa" character varying(50) NOT NULL,
-                "personaContacto" character varying(150) NOT NULL,
-                "empresaTelefono" character varying(150) NOT NULL,
+                "nombreEmpresa" character varying(70) NOT NULL,
+                "empresaTelefono" character varying(22) NOT NULL,
                 "emailEmpresa" character varying(150) NOT NULL,
                 "emailContacto" character varying(150) NOT NULL,
-                "ciRif" character varying(150) NOT NULL,
-                "direccionFiscal" character varying(150) NOT NULL,
+                "ciRif" character varying(30) NOT NULL,
+                "direccionFiscal" character varying(350) NOT NULL,
                 CONSTRAINT "UQ_07f7ec1aab389b436327bbb92b0" UNIQUE ("ciRif"),
-                CONSTRAINT "UQ_09a3baa340ba39b546682a7f413" UNIQUE ("direccionFiscal"),
                 CONSTRAINT "PK_96da49381769303a6515a8785c7" PRIMARY KEY ("id")
             )
         `);
