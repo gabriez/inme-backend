@@ -2,13 +2,12 @@ import { DataSource } from "typeorm";
 
 import { dataSourceOptionsCommon } from "./databaseConfig";
 /* migrations */
-import { InmeStart1755574936345 } from "./migrations/1755574936345-inme-start";
-import { MigrateUsers1756786682066 } from "./migrations/1756786682066-migrate-users";
+import { CoreSchema1757275174123 } from "./migrations/1757275174123-coreSchema";
 
 const AppDataSource = new DataSource({
 	...dataSourceOptionsCommon,
 	logging: false,
-	migrations: [InmeStart1755574936345, MigrateUsers1756786682066],
+	migrations: [CoreSchema1757275174123],
 });
 
 export default AppDataSource;
