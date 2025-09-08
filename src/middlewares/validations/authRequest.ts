@@ -51,7 +51,7 @@ export function signUpRule(req: IsignUpReq, res: Response, next: () => void) {
 		next();
 	} catch (err) {
 		console.log(err);
-		resErr.json({
+		res.status(500).json({
 			status: false,
 			message:
 				"Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde",
