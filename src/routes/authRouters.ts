@@ -7,23 +7,6 @@ import { signUpRule } from "../middlewares/validations/authRequest";
  * @swagger
  * components:
  *   schemas:
- *     GenericResponseSchema:
- *       type: object
- *       properties:
- *         status:
- *           type: boolean
- *         data:
- *           oneOf:
- *             - type: object
- *               description: Datos de la respuesta
- *             - type: null
- *               description: Nulo en caso de error
- *         message:
- *           anyOf:
- *             - type: string
- *             - type: array
- *               items:
- *                 type: string
  *     Login:
  *       type: object
  *       required:
@@ -89,13 +72,11 @@ export const authRoutes = (): Router => {
 	 *         content:
 	 *           application/json:
 	 *             schema:
-	 *              type: object
 	 *              $ref: '#/components/schemas/GenericResponseSchema'
 	 *       422:
 	 *        content:
 	 *          text/plain; charset=utf-8:
 	 *            schema:
-	 *              type: object
 	 *              $ref: '#/components/schemas/GenericResponseSchema'
 	 *            examples:
 	 *               usuarioExistente:
@@ -114,12 +95,7 @@ export const authRoutes = (): Router => {
 	 *        content:
 	 *          text/plain; charset=utf-8:
 	 *            schema:
-	 *              type: object
-	 *              $ref: '#/components/schemas/GenericResponseSchema'
-	 *            example:
-	 *              message: "Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde"
-	 *              status: false
-	 *              data: null
+	 *              $ref: '#/components/schemas/ErrorUnexpectedSchema'
 	 */
 	routerRoot.post("/signup", [signUpRule], signUp);
 
@@ -181,12 +157,7 @@ export const authRoutes = (): Router => {
 	 *        content:
 	 *          text/plain; charset=utf-8:
 	 *            schema:
-	 *              type: object
-	 *              $ref: '#/components/schemas/GenericResponseSchema'
-	 *            example:
-	 *              message: "Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde"
-	 *              status: false
-	 *              data: null
+	 *              $ref: '#/components/schemas/ErrorUnexpectedSchema'
 	 */
 	routerRoot.post("/signin", signIn);
 

@@ -11,7 +11,7 @@ import jwt from "jsonwebtoken";
 import { jwtSecret } from "../constants";
 import UserRepository from "../database/repositories/UserRepository";
 
-function createToken(user: Users) {
+export function createToken(user: Users) {
 	const { id, username } = user;
 	return jwt.sign({ username, id }, jwtSecret, {
 		expiresIn: 86_400 /* 1 day */,

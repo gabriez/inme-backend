@@ -8,6 +8,62 @@ import { swaggerDocs } from "./swagger";
 import { userRouters } from "./userRouters";
 import { clientRouters } from "./clientRouters";
 
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *    BearerAuth:
+ *     type: http
+ *     scheme: bearer
+ *     bearerFormat: JWT
+ *   schemas:
+ *     GenericResponseSchema:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: boolean
+ *         data:
+ *           oneOf:
+ *             - type: object
+ *               description: Datos de la respuesta
+ *             - type: null
+ *               description: Nulo en caso de error
+ *         message:
+ *           anyOf:
+ *             - type: string
+ *             - type: array
+ *               items:
+ *                 type: string
+ *     ErrorSecuritySchema:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: boolean
+ *         data:
+ *           type: null
+ *         message:
+ *           type: string
+ *       example:
+ *         status: false
+ *         data: null
+ *         message: "Falta el token de autenticación"
+ *     ErrorUnexpectedSchema:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: boolean
+ *         data:
+ *           type: null
+ *         message:
+ *           type: string
+ *       example:
+ *         status: false
+ *         data: null
+ *         message: "Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde"
+ * security:
+ *   - BearerAuth: []
+ */
+
 export const routes = (app: Express): Express => {
 	const router = Router();
 

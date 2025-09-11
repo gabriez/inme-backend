@@ -41,6 +41,13 @@ export function validateClient(
 	next: () => void
 ) {
 	const resErr = res.status(422);
+	if (!req.body) {
+		res.status(422).json({
+			status: false,
+			message: "No se proporcionaron datos en el cuerpo de solicitud",
+		});
+		return;
+	}
 	try {
 		const {
 			ciRif,
@@ -50,7 +57,7 @@ export function validateClient(
 			empresaTelefono,
 			nombreContacto,
 			nombreEmpresa,
-		} = req.body ?? {};
+		} = req.body;
 
 		const parse = clientSchema.safeParse({
 			ciRif,

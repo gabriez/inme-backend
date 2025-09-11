@@ -7,13 +7,12 @@ import {
 	RequestAPI,
 	ResponseAPI,
 } from "@/typescript/express";
-import { FindManyOptions } from "typeorm";
+import { FindManyOptions, Like } from "typeorm";
 
 export const createClient = async (
 	req: CreateUpdateClientReq,
 	res: ResponseAPI
 ) => {
-	ClientRepository;
 	try {
 		const {
 			ciRif,
@@ -69,8 +68,8 @@ export const getClients = async (req: GetClientsListReq, res: ResponseAPI) => {
 			take,
 			skip,
 		};
-		if (nombreEmpresa.length > 0) {
-			options.where = { nombreEmpresa: nombreEmpresa };
+		if (nombreEmpresa?.length > 0) {
+			options.where = { nombreEmpresa: Like(`%${nombreEmpresa}%`) };
 		}
 
 		const clients = await ClientRepository.find(options);
