@@ -17,7 +17,7 @@ services:
       - "${PORT}:${PORT}"
     # env_file: .env
     environment:
-      DB_PASSWORD: password 
+      DB_PASSWORD: password
       DB_HOST: db
       DB_USERNAME: gabo
       DB_NAME: inme

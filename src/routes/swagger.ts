@@ -1,14 +1,14 @@
-import { Router } from 'express';
-import SwaggerUI from 'swagger-ui-express';
+import { Router } from "express";
+import SwaggerUI from "swagger-ui-express";
 
-import { Docs, DocsJSON } from '../controllers/swaggerController';
+import { Docs, DocsJSON } from "../controllers/swaggerController";
 
 export const swaggerDocs = () => {
-	const router = Router();
+  const router = Router();
 
-	router.use('/', SwaggerUI.serve, Docs);
+  router.use("/", SwaggerUI.serve, Docs);
 
-	router.get('/documentation.json', DocsJSON);
+  router.get("/documentation.json", DocsJSON);
 
-	return router;
+  return router;
 };

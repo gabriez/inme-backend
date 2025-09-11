@@ -1,0 +1,3 @@
+set -e
+echo "hook: pre-push"
+yarn build:ci

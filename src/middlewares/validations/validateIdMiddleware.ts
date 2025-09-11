@@ -2,17 +2,17 @@ import type { Response } from "express";
 import type { IdParamReq } from "../../typescript/express";
 
 export function validateIdMiddleware(
-	req: IdParamReq,
-	res: Response,
-	next: () => void
+  req: IdParamReq,
+  res: Response,
+  next: () => void,
 ) {
-	const { id } = req.params;
-	if (!id || isNaN(Number(id))) {
-		res.status(422).json({
-			status: false,
-			message: "El id proporcionado no es válido",
-		});
-		return;
-	}
-	next();
+  const { id } = req.params;
+  if (!id || isNaN(Number(id))) {
+    res.status(422).json({
+      status: false,
+      message: "El id proporcionado no es válido",
+    });
+    return;
+  }
+  next();
 }

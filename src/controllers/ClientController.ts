@@ -4,7 +4,6 @@ import {
 	CreateUpdateClientReq,
 	GetClientsListReq,
 	IdParamReq,
-	RequestAPI,
 	ResponseAPI,
 } from "@/typescript/express";
 import { FindManyOptions, Like } from "typeorm";

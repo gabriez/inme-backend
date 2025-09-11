@@ -12,25 +12,25 @@ import { Client } from "./entities/Client";
 import { DB } from "@/constants";
 
 const databaseConfig: DataSourceOptions = {
-	type: "postgres",
-	host: DB.host,
-	port: DB.port,
-	username: DB.user,
-	password: DB.password,
-	database: DB.database,
-	logging: true,
-	ssl: DB.ssl,
+  type: "postgres",
+  host: DB.host,
+  port: DB.port,
+  username: DB.user,
+  password: DB.password,
+  database: DB.database,
+  logging: true,
+  ssl: DB.ssl,
 };
 
 export const dataSourceOptionsCommon: DataSourceOptions = {
-	...databaseConfig,
-	entities: [
-		Roles,
-		Users,
-		Historial,
-		Products,
-		Providers,
-		ProductionOrders,
-		Client,
-	],
+  ...databaseConfig,
+  entities: [
+    Roles,
+    Users,
+    Historial,
+    Products,
+    Providers,
+    ProductionOrders,
+    Client,
+  ],
 };

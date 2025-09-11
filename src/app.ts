@@ -25,16 +25,16 @@ app.use(express.urlencoded({ extended: false }));
 routes(app);
 
 app.all("/status", (req: Request, res: Response) => {
-	res.json({
-		status: true,
-		message: "Active and running server!",
-	});
+  res.json({
+    status: true,
+    message: "Active and running server!",
+  });
 });
 
 app.all("/*rest", (req: Request, res: Response) => {
-	res.status(404).json({
-		error: "404 - requested resource not found",
-	});
+  res.status(404).json({
+    error: "404 - requested resource not found",
+  });
 });
 
 export default app;
