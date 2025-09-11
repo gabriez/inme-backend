@@ -19,7 +19,7 @@ const databaseConfig: DataSourceOptions = {
 	password: DB.password,
 	database: DB.database,
 	logging: true,
-	ssl: true,
+	ssl: DB.ssl,
 };
 
 export const dataSourceOptionsCommon: DataSourceOptions = {

@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CoreSchema1757306852147 implements MigrationInterface {
-    name = 'CoreSchema1757306852147'
+export class NewMigration1757562354082 implements MigrationInterface {
+    name = 'NewMigration1757562354082'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -85,6 +85,14 @@ export class CoreSchema1757306852147 implements MigrationInterface {
             )
         `);
         await queryRunner.query(`
+            CREATE TYPE "public"."production_orders_orderstate_enum" AS ENUM(
+                'En proceso',
+                'Ejecutada',
+                'Cancelada',
+                'Por iniciar'
+            )
+        `);
+        await queryRunner.query(`
             CREATE TABLE "production_orders" (
                 "id" SERIAL NOT NULL,
                 "create_at" TIMESTAMP NOT NULL DEFAULT now(),
@@ -100,6 +108,9 @@ export class CoreSchema1757306852147 implements MigrationInterface {
                 CONSTRAINT "REL_8584be8f232016b2c24a4e1258" UNIQUE ("productId"),
                 CONSTRAINT "PK_44d72e026027e3448b5d655e16e" PRIMARY KEY ("id")
             )
+        `);
+        await queryRunner.query(`
+            CREATE TYPE "public"."historial_action_enum" AS ENUM('ingreso', 'egreso', 'Order de producción')
         `);
         await queryRunner.query(`
             CREATE TABLE "historial" (
@@ -242,7 +253,13 @@ export class CoreSchema1757306852147 implements MigrationInterface {
             DROP TABLE "historial"
         `);
         await queryRunner.query(`
+            DROP TYPE "public"."historial_action_enum"
+        `);
+        await queryRunner.query(`
             DROP TABLE "production_orders"
+        `);
+        await queryRunner.query(`
+            DROP TYPE "public"."production_orders_orderstate_enum"
         `);
         await queryRunner.query(`
             DROP TABLE "providers"
