@@ -1,8 +1,9 @@
 import type { Response } from "express";
 import type { CreateUpdateClientReq } from "../../typescript/express";
+
 import { z } from "zod";
 
-const regexCedula = /^[VEJPG]{1}[0-9]{5,10}$/;
+const regexCedula = /^[VEJPGvejpg]{1}[0-9]{5,10}$/;
 const clientSchema = z.object({
   nombreContacto: z
     .string("El nombre del contacto debe ser una cadena")

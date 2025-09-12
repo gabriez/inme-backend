@@ -4,9 +4,9 @@ import { Router } from "express";
 
 // Routes
 import { authRoutes } from "./authRouters";
+import { clientRouters } from "./clientRouters";
 import { swaggerDocs } from "./swagger";
 import { userRouters } from "./userRouters";
-import { clientRouters } from "./clientRouters";
 
 /**
  * @swagger
@@ -64,6 +64,7 @@ import { clientRouters } from "./clientRouters";
  *   - BearerAuth: []
  */
 
+// TODO: add 401 error
 export const routes = (app: Express): Express => {
   const router = Router();
 

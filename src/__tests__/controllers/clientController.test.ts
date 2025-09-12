@@ -1,19 +1,35 @@
+import type { Express } from "express";
+import type { DataSource } from "typeorm";
+import type { Users } from "@/database/entities/Users";
+
 import { agent } from "supertest";
-import app from "../../app";
-import { Client } from "@/database/entities/Client";
-import { Users } from "@/database/entities/Users";
+
 import { createToken } from "@/controllers/AuthController";
+import { buildDatabase, seedDatabase } from "../helpers";
 
 const BaseRoute = "/api/v1.0";
 
 describe("Client controler", () => {
-  let fakeUser = Users.create({
-    password: "Ganador123$",
-    username: "LuisCalvito",
-    name: "Luis Mogollon",
-    email: "inme@gmail.com",
+  let fakeUser: Users;
+  let token: string;
+  let dataSource: DataSource | undefined;
+  let app: Express;
+  beforeEach(async () => {
+    dataSource = await buildDatabase();
+    const res = await seedDatabase();
+    if (res) {
+      fakeUser = res.user;
+      token = createToken(fakeUser);
+    }
+    const imported = await import("../../app");
+    app = imported.default as Express;
   });
-  let token = createToken(fakeUser);
+
+  afterAll(async () => {
+    if (dataSource) {
+      await dataSource.destroy();
+    }
+  });
 
   describe("Create client", () => {
     it("Should return 201 and the client created", async () => {
@@ -27,12 +43,27 @@ describe("Client controler", () => {
           empresaTelefono: "04141234567",
           emailEmpresa: "gabotdev@gmail.com",
           emailContacto: "inme@gmail.com",
-          ciRif: "v12345678",
-          direccionFiscal: "Carvajal",
+          ciRif: "V12345678",
+          direccionFiscal: "Carvajal, La Cejita",
         });
 
-      console.log(response);
       expect(response.status).toBe(201);
+      expect(response.body).toEqual(
+        expect.objectContaining({
+          status: true,
+          data: expect.objectContaining({
+            id: expect(Number),
+            nombreContacto: "Luis",
+            nombreEmpresa: "Inme",
+            empresaTelefono: "04141234567",
+            emailEmpresa: "gabotdev@gmail.com",
+            emailContacto: "inme@gmail.com",
+            ciRif: "V12345678",
+            direccionFiscal: "Carvajal, La Cejita",
+          }) as unknown,
+          message: "Cliente creado exitosamente!",
+        }),
+      );
     });
   });
 });
