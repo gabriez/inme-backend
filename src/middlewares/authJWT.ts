@@ -4,8 +4,9 @@ import type { RequestAPI, ResponseAPI } from "../typescript/express";
 
 import jwt from "jsonwebtoken";
 
+import { GlobalRepository } from "@/database/repositories/globalRepository";
 import { jwtSecret } from "../constants";
-import UserRepository from "../database/repositories/UserRepository";
+const UserRepository = GlobalRepository.userRepository;
 
 async function verifyToken(
   req: RequestAPI,

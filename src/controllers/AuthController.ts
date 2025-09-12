@@ -8,8 +8,8 @@ import type {
 
 import jwt from "jsonwebtoken";
 
+import { GlobalRepository } from "@/database/repositories/globalRepository";
 import { jwtSecret } from "../constants";
-import UserRepository from "../database/repositories/UserRepository";
 
 export function createToken(user: Users) {
   const { id, username } = user;
@@ -17,6 +17,7 @@ export function createToken(user: Users) {
     expiresIn: 86_400 /* 1 day */,
   });
 }
+const UserRepository = GlobalRepository.userRepository;
 
 export const signUp = async (req: IsignUpReq, res: ResponseAPI) => {
   try {
@@ -34,7 +35,7 @@ export const signUp = async (req: IsignUpReq, res: ResponseAPI) => {
 
     const user = await UserRepository.findOneBy([{ username }, { email }]);
     if (user) {
-      let message = [];
+      const message = [];
       if (user.username === username) {
         message.push("El usuario ya existe");
       }
