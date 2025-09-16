@@ -69,6 +69,8 @@ All useful commands are ready in the `package.json` to automate your workflow:
 | `migrate`  | Runs migrations with TypeScript (`tsx scripts/migrate.ts`). |
 | `typeorm`  | TypeORM CLI (`tsx ./node_modules/typeorm/cli.js`).          |
 | `prepare`  | Husky hook: installs Git hooks.                             |
+| `test`     | Runs all tests inside __tests__ folder                      |
+|`dev:docker`| Runs the backend inside a docker container                  |
 
 ---
 
@@ -103,6 +105,7 @@ All useful commands are ready in the `package.json` to automate your workflow:
 
 ```plaintext
 ├─ src/
+|  |─ __tests__/      # Tests for controllers and middlewares
 │  ├─ controllers/    # Controllers and business logic
 │  ├─ database/       # Configuration, data access, entity and schema definitions
 │  ├─ libs/           # Shared libraries and utilities
