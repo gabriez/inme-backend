@@ -1,13 +1,13 @@
-import { DataSource } from 'typeorm';
+import { DataSource } from "typeorm";
 
-import { dataSourceOptionsCommon } from './databaseConfig';
+import { dataSourceOptionsCommon } from "./databaseConfig";
 /* migrations */
-import { CoreSchema1649955218198 } from './migrations/1649955218198-CoreSchema';
+import { NewMigration1757562354082 } from "./migrations/1757562354082-new-migration";
 
 const AppDataSource = new DataSource({
-	...dataSourceOptionsCommon,
-	logging: false,
-	migrations: [CoreSchema1649955218198],
+  ...dataSourceOptionsCommon,
+  logging: false,
+  migrations: [NewMigration1757562354082],
 });
 
 export default AppDataSource;

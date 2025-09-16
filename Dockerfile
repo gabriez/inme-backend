@@ -1,9 +1,8 @@
-FROM node:16.13.0-alpine3.14
-
-LABEL version="0.0.1"
-LABEL maintaner="Gallbers Gallardo - Gitlab/Github: @gagzu"
+FROM node:22.19.0-trixie
 
 WORKDIR /app
+
+ENV PORT=3030
 
 COPY package*.json ./
 
@@ -11,6 +10,6 @@ RUN yarn install
 
 COPY . .
 
-EXPOSE 3000
+EXPOSE $PORT
 
 CMD ["yarn", "dev"]

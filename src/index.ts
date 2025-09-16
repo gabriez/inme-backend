@@ -1,15 +1,25 @@
-import app from './app';
-import AppDataSource from './database/appDataSource';
+import type { Express } from "express";
 
-try {
-	await AppDataSource.initialize();
-	console.log('Data Source has been initialized!');
+import AppDataSource from "src/database/appDataSource";
 
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-	const PORT = app.get('port');
+import { buildRepositories } from "./database/repositories/globalRepository";
 
-	app.listen(PORT);
-	console.log(`server listening on port ${PORT}`);
-} catch (error) {
-	console.log('Error during application initialization', error);
+async function main() {
+  try {
+    await AppDataSource.initialize();
+    buildRepositories(AppDataSource);
+
+    // Importing app dynamically to ensure that all previous async operations are completed
+    // ensuring GlobalRepository singleton is not undefined in other files
+    const imported = await import("./app");
+    const app = imported.default as Express;
+    const port: number = app.get("port") as number;
+    app.listen(port, () => {
+      console.log(`Server is running on http://localhost:${port}`);
+    });
+  } catch (error) {
+    console.log(error);
+  }
 }
+
+await main();

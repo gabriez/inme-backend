@@ -1,112 +1,136 @@
 /* types */
-import type { Users } from '../database/entities/Users';
-import type { IsignInReq, IsignUpReq, ResponseAPI } from '../typescript/express';
+import type { Users } from "../database/entities/Users";
+import type {
+  IsignInReq,
+  IsignUpReq,
+  ResponseAPI,
+} from "../typescript/express";
 
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
-import { jwtSecret } from '../constants';
-import UserRepository from '../database/repositories/UserRepository';
+import { GlobalRepository } from "@/database/repositories/globalRepository";
+import { jwtSecret } from "../constants";
 
-function createToken(user: Users) {
-	const { id, username } = user;
-	return jwt.sign({ username, id }, jwtSecret, {
-		expiresIn: 86_400 /* 1 day */,
-	});
+export function createToken(user: Users) {
+  const { id, username } = user;
+  return jwt.sign({ username, id }, jwtSecret, {
+    expiresIn: 86_400 /* 1 day */,
+  });
 }
+const UserRepository = GlobalRepository.userRepository;
 
 export const signUp = async (req: IsignUpReq, res: ResponseAPI) => {
-	try {
-		const { password, username, name } = req.body ?? {};
+  try {
+    const { password, username, name, email } = req.body ?? {};
 
-		if (!username) {
-			res.status(422).json({
-				data: null,
-				status: false,
-				message: 'Por favor envíe su username',
-			});
+    if (!username) {
+      res.status(422).json({
+        data: null,
+        status: false,
+        message: "Por favor envíe su username",
+      });
 
-			return;
-		}
+      return;
+    }
 
-		const user = await UserRepository.findOneBy({ username });
+    const user = await UserRepository.findOneBy([{ username }, { email }]);
+    if (user) {
+      const message = [];
+      if (user.username === username) {
+        message.push("El usuario ya existe");
+      }
+      if (user.email === email) {
+        message.push("El email ya está en uso");
+      }
 
-		if (user) {
-			res.status(422).json({
-				data: null,
-				status: false,
-				message: 'El usuario ya existe',
-			});
+      res.status(422).json({
+        data: null,
+        status: false,
+        message,
+      });
 
-			return;
-		}
+      return;
+    }
 
-		const newUser = UserRepository.create({
-			name,
-			username,
-			password,
-		});
+    const newUser = UserRepository.create({
+      name,
+      username,
+      password,
+      email,
+    });
 
-		await UserRepository.save(newUser);
+    await UserRepository.save(newUser);
 
-		res.status(201).json({
-			status: true,
-			data: newUser,
-			message: 'Success!',
-		});
-	} catch (error) {
-		console.log(error);
-		res.status(500).json({
-			status: false,
-			message: 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde',
-		});
-	}
+    res.status(201).json({
+      status: true,
+      data: {
+        name: newUser.name,
+        username: newUser.username,
+        email: newUser.email,
+      },
+      message: "Success!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      status: false,
+      message: [
+        "Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde",
+      ],
+    });
+  }
 };
 
 export const signIn = async (req: IsignInReq, res: ResponseAPI) => {
-	try {
-		const { username, password } = req.body ?? {};
+  try {
+    // Se acepta email o nombre de usuario
+    const { username, password } = req.body ?? {};
 
-		if (!username || !password) {
-			res.status(422).json({
-				data: null,
-				status: false,
-				message: 'Por favor envíe su username y contraseña',
-			});
+    if (!username || !password) {
+      res.status(422).json({
+        data: null,
+        status: false,
+        message: "Por favor envíe su username/email y contraseña",
+      });
 
-			return;
-		}
+      return;
+    }
 
-		const user = await UserRepository.findOneBy({ username });
+    const user = await UserRepository.findOneBy([
+      { username },
+      { email: username },
+    ]);
 
-		if (!user) {
-			res.status(422).json({
-				data: null,
-				status: false,
-				message: 'El usuario no existe',
-			});
+    if (!user) {
+      res.status(422).json({
+        data: null,
+        status: false,
+        message: "El usuario no existe",
+      });
 
-			return;
-		}
+      return;
+    }
 
-		const isMatch = await user.comparePassword(password);
+    const isMatch = await user.comparePassword(password);
 
-		if (isMatch) {
-			res.status(200).json({
-				status: true,
-				message: 'Success!',
-				data: { token: createToken(user) },
-			});
-		} else {
-			res.status(400).json({
-				status: false,
-				message: 'El username o la contraseña son incorrecto',
-			});
-		}
-	} catch (error) {
-		console.log('Error in signIn:', error);
-		res.status(500).json({
-			status: false,
-			message: 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde',
-		});
-	}
+    if (isMatch) {
+      res.status(200).json({
+        status: true,
+        message: "Success!",
+        data: { token: createToken(user) },
+      });
+    } else {
+      res.status(400).json({
+        status: false,
+        message: "El username o la contraseña son incorrecto",
+      });
+    }
+  } catch (error) {
+    console.log("Error in signIn:", error);
+    res.status(500).json({
+      status: false,
+      message:
+        "Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde",
+    });
+  }
 };
