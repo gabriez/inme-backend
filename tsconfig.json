@@ -27,8 +27,8 @@
       "@/controllers/*": ["src/controllers/*"],
       "@/database/*": ["src/database/*"],
       "@/libs/*": ["src/contexts/libs/*"],
-      "@/middlewares/*": ["src/contexts/middlewares/*"],
-      "@/routes/*": ["src/contexts/routes/*"],
+      "@/middlewares/*": ["src/middlewares/*"],
+      "@/routes/*": ["src/routes/*"],
       "@/*": ["src/*"]
     }
   }

@@ -68,3 +68,18 @@ export async function seedDatabase() {
     console.log(error);
   }
 }
+
+export async function createClients(n: number, baseName = "TestClient") {
+  for (let i = 0; i < n; i++) {
+    const client = GlobalRepository.clientRepository.create({
+      nombreContacto: `Contacto ${i}`,
+      nombreEmpresa: `${baseName}-${i}`,
+      empresaTelefono: `0414-00000${i}`,
+      emailEmpresa: `empresa${i}@test.com`,
+      emailContacto: `contacto${i}@test.com`,
+      ciRif: `J${10_000 + i}`, // único
+      direccionFiscal: `Dirección Fiscal ${i}`,
+    });
+    await GlobalRepository.clientRepository.save(client);
+  }
+}

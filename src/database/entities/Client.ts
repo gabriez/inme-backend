@@ -1,4 +1,5 @@
 import { Column, Entity } from "typeorm";
+
 import { CoreEntity } from "./CoreEntity";
 
 @Entity()

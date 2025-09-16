@@ -1,4 +1,5 @@
 import { Column, Entity, JoinTable, ManyToMany } from "typeorm";
+
 import { CoreEntity } from "./CoreEntity";
 import { Products } from "./Products";
 

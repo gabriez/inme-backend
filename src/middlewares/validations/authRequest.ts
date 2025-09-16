@@ -1,5 +1,6 @@
 import type { Response } from "express";
 import type { IsignUpReq } from "../../typescript/express";
+
 import { z } from "zod";
 
 const signUpSchema = z.object({
@@ -49,8 +50,8 @@ export function signUpRule(req: IsignUpReq, res: Response, next: () => void) {
     }
 
     next();
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.log(error);
     res.status(500).json({
       status: false,
       message:

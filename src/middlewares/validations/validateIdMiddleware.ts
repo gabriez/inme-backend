@@ -7,8 +7,8 @@ export function validateIdMiddleware(
   next: () => void,
 ) {
   const { id } = req.params;
-  if (!id || isNaN(Number(id))) {
-    res.status(422).json({
+  if (!id || Number.isNaN(Number(id))) {
+    res.status(400).json({
       status: false,
       message: "El id proporcionado no es válido",
     });

@@ -47,6 +47,19 @@ import { userRouters } from "./userRouters";
  *         status: false
  *         data: null
  *         message: "Falta el token de autenticación"
+ *     ErrorValidationToken:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: boolean
+ *         data:
+ *           type: null
+ *         message:
+ *           type: string
+ *       example:
+ *         status: false
+ *         data: null
+ *         message: "No se pudo verificar el token de autenticación"
  *     ErrorUnexpectedSchema:
  *       type: object
  *       properties:

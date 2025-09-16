@@ -1,4 +1,5 @@
 import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
+
 import { CoreEntity } from "./CoreEntity";
 
 @Entity()

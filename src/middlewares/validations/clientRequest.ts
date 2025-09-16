@@ -27,23 +27,25 @@ const clientSchema = z.object({
     .optional(),
   ciRif: z
     .string("El CI/RIF debe ser una cadena")
-    .refine((val) => regexCedula.test(val), { error: "El CI/RIF no es válido" })
     .min(6, "El CI/RIF debe tener al menos 6 caracteres")
-    .max(150, "El CI/RIF no debe exceder los 150 caracteres"),
+    .max(11, "El CI/RIF no debe exceder los 11 caracteres")
+    .refine((val) => regexCedula.test(val), {
+      error: "El CI/RIF no es válido",
+    }),
   direccionFiscal: z
     .string("La dirección fiscal debe ser una cadena")
     .min(10, "La dirección fiscal debe tener al menos 10 caracteres")
     .max(350, "La dirección fiscal no debe exceder los 350 caracteres"),
 });
 
-export function validateClient(
+export function validateClientMiddleware(
   req: CreateUpdateClientReq,
   res: Response,
   next: () => void,
 ) {
   const resErr = res.status(422);
   if (!req.body) {
-    res.status(422).json({
+    resErr.json({
       status: false,
       message: "No se proporcionaron datos en el cuerpo de solicitud",
     });

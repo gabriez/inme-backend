@@ -1,6 +1,7 @@
 import type { Request, RequestHandler, Response } from "express";
+import type { Options } from "swagger-jsdoc";
 
-import swaggerJSDoc, { Options } from "swagger-jsdoc";
+import swaggerJSDoc from "swagger-jsdoc";
 import SwaggerUI from "swagger-ui-express";
 
 import { PORT_APP } from "../constants";

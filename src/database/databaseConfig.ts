@@ -3,11 +3,11 @@ import type { DataSourceOptions } from "typeorm";
 /* entities */
 import { Roles } from "@/database/entities/Roles";
 import { Users } from "@/database/entities/Users";
+import { Client } from "./entities/Client";
 import { Historial } from "./entities/Historial";
+import { ProductionOrders } from "./entities/ProductionOrders";
 import { Products } from "./entities/Products";
 import { Providers } from "./entities/Providers";
-import { ProductionOrders } from "./entities/ProductionOrders";
-import { Client } from "./entities/Client";
 
 import { DB } from "@/constants";
 

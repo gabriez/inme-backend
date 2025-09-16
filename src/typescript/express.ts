@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
-import type { ParamsDictionary, Send, Query } from "express-serve-static-core";
+import type { ParamsDictionary, Query, Send } from "express-serve-static-core";
+import type { Client } from "@/database/entities/Client";
 import type { Users } from "../database/entities/Users";
-import { Client } from "@/database/entities/Client";
 export interface TypedResponse<ResBody> extends Response {
   json: Send<ResBody, this>;
 }
@@ -14,12 +14,13 @@ export interface RequestAPI<T = {}, P extends ParamsDictionary = {}, Q = {}>
   query: Q & Query;
 }
 
-export interface ResponseAPI<T = unknown>
-  extends TypedResponse<{
-    data?: T;
-    status: boolean;
-    message: string[] | string;
-  }> {}
+export interface ResponseI<T = unknown> {
+  data?: T;
+  status: boolean;
+  message: string[] | string;
+}
+
+export interface ResponseAPI<T = unknown> extends TypedResponse<ResponseI<T>> {}
 
 /* AuthController */
 export interface IsignUpReq extends RequestAPI<Users> {}

@@ -1,14 +1,14 @@
 import { Router } from "express";
 
-import { verifyToken } from "../middlewares/authJWT";
 import {
   createClient,
   getClientById,
   getClients,
   updateClient,
 } from "@/controllers/ClientController";
+import { verifyToken } from "../middlewares/authJWT";
+import { validateClientMiddleware } from "../middlewares/validations/clientRequest";
 import { validateIdMiddleware } from "../middlewares/validations/validateIdMiddleware";
-import { validateClient } from "../middlewares/validations/clientRequest";
 
 /**
  * @swagger
@@ -97,6 +97,12 @@ export const clientRouters = () => {
    *         updatedAt: "2024-01-01T00:00:00.000Z",
    *         deletedAt: null
    *        }
+   *    401:
+   *     description: Unauthorized
+   *     content:
+   *      application/json:
+   *       schema:
+   *        $ref: '#/components/schemas/ErrorValidationToken'
    *    403:
    *     description: Forbidden
    *     content:
@@ -125,7 +131,7 @@ export const clientRouters = () => {
    *         value:
    *          status: false
    *          data: null
-   *          message: [ "El nombre del contacto debe ser una cadena", "El nombre del contacto debe tener al menos 3 caracteres", "El nombre del contacto no debe exceder los 70 caracteres", 'El nombre de la empresa debe ser una cadena', 'El nombre de la empresa debe tener al menos 3 caracteres','El nombre de la empresa no debe exceder los 70 caracteres', 'El teléfono de la empresa debe ser una cadena', 'El teléfono de la empresa debe tener al menos 7 caracteres', 'El teléfono de la empresa no debe exceder los 22 caracteres', 'El email de la empresa no es válido', 'El email de la empresa no debe exceder los 150 caracteres', 'El email del contacto no es válido', 'El email del contacto no debe exceder los 150 caracteres', 'El CI/RIF debe ser una cadena', 'El CI/RIF no es válido', 'El CI/RIF debe tener al menos 6 caracteres', 'El CI/RIF no debe exceder los 150 caracteres',  'La dirección fiscal debe ser una cadena', 'La dirección fiscal debe tener al menos 10 caracteres', 'La dirección fiscal no debe exceder los 350 caracteres']
+   *          message: [ "El nombre del contacto debe ser una cadena", "El nombre del contacto debe tener al menos 3 caracteres", "El nombre del contacto no debe exceder los 70 caracteres", 'El nombre de la empresa debe ser una cadena', 'El nombre de la empresa debe tener al menos 3 caracteres','El nombre de la empresa no debe exceder los 70 caracteres', 'El teléfono de la empresa debe ser una cadena', 'El teléfono de la empresa debe tener al menos 7 caracteres', 'El teléfono de la empresa no debe exceder los 22 caracteres', 'El email de la empresa no es válido', 'El email de la empresa no debe exceder los 150 caracteres', 'El email del contacto no es válido', 'El email del contacto no debe exceder los 150 caracteres', 'El CI/RIF debe ser una cadena', 'El CI/RIF no es válido', 'El CI/RIF debe tener al menos 6 caracteres', 'El CI/RIF no debe exceder los 11 caracteres', 'La dirección fiscal debe ser una cadena', 'La dirección fiscal debe tener al menos 10 caracteres', 'La dirección fiscal no debe exceder los 350 caracteres']
    *        emptyBody:
    *         summary: El cuerpo de la solicitud está vacío
    *         value:
@@ -183,6 +189,12 @@ export const clientRouters = () => {
    *         deletedAt: null
    *         }],
    *         total: 1 }
+   *    401:
+   *     description: Unauthorized
+   *     content:
+   *      application/json:
+   *       schema:
+   *        $ref: '#/components/schemas/ErrorValidationToken'
    *    403:
    *     description: Forbidden
    *     content:
@@ -199,7 +211,7 @@ export const clientRouters = () => {
   routerRoot
     .route("/")
     .get(verifyToken, getClients)
-    .post([verifyToken, validateClient], createClient);
+    .post([verifyToken, validateClientMiddleware], createClient);
 
   /**
    * @swagger
@@ -239,6 +251,22 @@ export const clientRouters = () => {
    *         updatedAt: "2024-01-01T00:00:00.000Z",
    *         deletedAt: null
    *         }
+   *    400:
+   *     description: Unprocessable Entity
+   *     content:
+   *      application/json:
+   *       schema:
+   *        $ref: '#/components/schemas/GenericResponseSchema'
+   *       example:
+   *        status: false
+   *        data: null
+   *        message: "El id proporcionado no es válido"
+   *    401:
+   *     description: Unauthorized
+   *     content:
+   *      application/json:
+   *       schema:
+   *        $ref: '#/components/schemas/ErrorValidationToken'
    *    403:
    *     description: Forbidden
    *     content:
@@ -255,16 +283,6 @@ export const clientRouters = () => {
    *        status: false
    *        data: null
    *        message: "Cliente no encontrado"
-   *    422:
-   *     description: Unprocessable Entity
-   *     content:
-   *      application/json:
-   *       schema:
-   *        $ref: '#/components/schemas/GenericResponseSchema'
-   *       example:
-   *        status: false
-   *        data: null
-   *        message: "El id proporcionado no es válido"
    *    500:
    *     content:
    *      text/plain; charset=utf-8:
@@ -312,6 +330,22 @@ export const clientRouters = () => {
    *         deletedAt: null
    *         }
    *        message: "Cliente actualizado exitosamente"
+   *    400:
+   *     description: Unprocessable Entity
+   *     content:
+   *      application/json:
+   *       schema:
+   *        $ref: '#/components/schemas/GenericResponseSchema'
+   *       example:
+   *        status: false
+   *        data: null
+   *        message: "El id proporcionado no es válido"
+   *    401:
+   *     description: Unauthorized
+   *     content:
+   *      application/json:
+   *       schema:
+   *        $ref: '#/components/schemas/ErrorValidationToken'
    *    403:
    *     description: Forbidden
    *     content:
@@ -335,18 +369,12 @@ export const clientRouters = () => {
    *       schema:
    *        $ref: '#/components/schemas/GenericResponseSchema'
    *       examples:
-   *        invalidId:
-   *         summary: ID inválido
-   *         value:
-   *          status: false
-   *          data: null
-   *          message: "El id proporcionado no es válido"
    *        invalidBody:
    *         summary: Cuerpo de solicitud inválido
    *         value:
    *          status: false
    *          data: null
-   *          message: [ "El nombre del contacto debe ser una cadena", "El nombre del contacto debe tener al menos 3 caracteres", "El nombre del contacto no debe exceder los 70 caracteres", 'El nombre de la empresa debe ser una cadena', 'El nombre de la empresa debe tener al menos 3 caracteres','El nombre de la empresa no debe exceder los 70 caracteres', 'El teléfono de la empresa debe ser una cadena', 'El teléfono de la empresa debe tener al menos 7 caracteres', 'El teléfono de la empresa no debe exceder los 22 caracteres', 'El email de la empresa no es válido', 'El email de la empresa no debe exceder los 150 caracteres', 'El email del contacto no es válido', 'El email del contacto no debe exceder los 150 caracteres', 'El CI/RIF debe ser una cadena', 'El CI/RIF no es válido', 'El CI/RIF debe tener al menos 6 caracteres', 'El CI/RIF no debe exceder los 150 caracteres',  'La dirección fiscal debe ser una cadena', 'La dirección fiscal debe tener al menos 10 caracteres', 'La dirección fiscal no debe exceder los 350 caracteres']
+   *          message: [ "El nombre del contacto debe ser una cadena", "El nombre del contacto debe tener al menos 3 caracteres", "El nombre del contacto no debe exceder los 70 caracteres", 'El nombre de la empresa debe ser una cadena', 'El nombre de la empresa debe tener al menos 3 caracteres','El nombre de la empresa no debe exceder los 70 caracteres', 'El teléfono de la empresa debe ser una cadena', 'El teléfono de la empresa debe tener al menos 7 caracteres', 'El teléfono de la empresa no debe exceder los 22 caracteres', 'El email de la empresa no es válido', 'El email de la empresa no debe exceder los 150 caracteres', 'El email del contacto no es válido', 'El email del contacto no debe exceder los 150 caracteres', 'El CI/RIF debe ser una cadena', 'El CI/RIF no es válido', 'El CI/RIF debe tener al menos 6 caracteres', 'El CI/RIF no debe exceder los 11 caracteres',  'La dirección fiscal debe ser una cadena', 'La dirección fiscal debe tener al menos 10 caracteres', 'La dirección fiscal no debe exceder los 350 caracteres']
    *        emptyBody:
    *         summary: El cuerpo de la solicitud está vacío
    *         value:
@@ -363,7 +391,10 @@ export const clientRouters = () => {
   routerRoot
     .route("/:id")
     .get([verifyToken, validateIdMiddleware], getClientById)
-    .put([verifyToken, validateIdMiddleware, validateClient], updateClient);
+    .put(
+      [verifyToken, validateIdMiddleware, validateClientMiddleware],
+      updateClient,
+    );
 
   return routerRoot;
 };
