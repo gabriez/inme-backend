@@ -19,7 +19,7 @@ export class Providers extends CoreEntity {
 
   @Column({
     type: "varchar",
-    length: 100,
+    length: 22,
   })
   enterprisePhone: string;
 
@@ -37,7 +37,8 @@ export class Providers extends CoreEntity {
 
   @Column({
     type: "varchar",
-    length: 50,
+    length: 30,
+    unique: true,
   })
   ciRif: string;
 

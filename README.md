@@ -57,20 +57,20 @@ Welcome! This repository is your starting point for creating modern APIs with Ex
 
 All useful commands are ready in the `package.json` to automate your workflow:
 
-| Script     | Description                                                 |
-| ---------- | ----------------------------------------------------------- |
-| `build`    | Compiles TypeScript (`tsc`).                                |
-| `start`    | Runs the compiled app (`node dist/index.js`).               |
-| `dev`      | Starts the server in watch mode (`tsx watch src/index.ts`). |
-| `lint`     | Runs ESLint to check the code.                              |
-| `lint:fix` | Runs ESLint and automatically fixes errors.                 |
-| `format`   | Applies Prettier to the entire project.                     |
-| `doc`      | Generates documentation with JSDoc (`jsdoc -c jsdoc.json`). |
-| `migrate`  | Runs migrations with TypeScript (`tsx scripts/migrate.ts`). |
-| `typeorm`  | TypeORM CLI (`tsx ./node_modules/typeorm/cli.js`).          |
-| `prepare`  | Husky hook: installs Git hooks.                             |
-| `test`     | Runs all tests inside __tests__ folder                      |
-|`dev:docker`| Runs the backend inside a docker container                  |
+| Script       | Description                                                 |
+| ------------ | ----------------------------------------------------------- |
+| `build`      | Compiles TypeScript (`tsc`).                                |
+| `start`      | Runs the compiled app (`node dist/index.js`).               |
+| `dev`        | Starts the server in watch mode (`tsx watch src/index.ts`). |
+| `lint`       | Runs ESLint to check the code.                              |
+| `lint:fix`   | Runs ESLint and automatically fixes errors.                 |
+| `format`     | Applies Prettier to the entire project.                     |
+| `doc`        | Generates documentation with JSDoc (`jsdoc -c jsdoc.json`). |
+| `migrate`    | Runs migrations with TypeScript (`tsx scripts/migrate.ts`). |
+| `typeorm`    | TypeORM CLI (`tsx ./node_modules/typeorm/cli.js`).          |
+| `prepare`    | Husky hook: installs Git hooks.                             |
+| `test`       | Runs all tests inside **tests** folder                      |
+| `dev:docker` | Runs the backend inside a docker container                  |
 
 ---
 

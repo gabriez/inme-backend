@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import type { ParamsDictionary, Query, Send } from "express-serve-static-core";
 import type { Client } from "@/database/entities/Client";
+import type { Providers } from "@/database/entities/Providers";
 import type { Users } from "../database/entities/Users";
 export interface TypedResponse<ResBody> extends Response {
   json: Send<ResBody, this>;
@@ -45,5 +46,20 @@ export interface GetClientsListReq
       limit: string;
       offset: string;
       nombreEmpresa: string;
+    }
+  > {}
+
+// Providers
+export interface CreateUpdateProvidersReq
+  extends RequestAPI<Providers, { id: string }> {}
+
+export interface GetProvidersListReq
+  extends RequestAPI<
+    {},
+    {},
+    {
+      limit: string;
+      offset: string;
+      enterpriseName: string;
     }
   > {}
