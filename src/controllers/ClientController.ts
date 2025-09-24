@@ -135,15 +135,6 @@ export const updateClient = async (
       return;
     }
 
-    // const clientExist = await ClientRepository.existsBy({ ciRif: req.body.ciRif });
-    // if (clientExist) {
-    //   res.status(409).json({
-    //     status: false,
-    //     message: "Ya existe un cliente con el mismo CI/RIF",
-    //   });
-    //   return;
-    // }
-
     const { id } = req.params;
 
     const client = await ClientRepository.findOneBy({ id: Number(id) });
