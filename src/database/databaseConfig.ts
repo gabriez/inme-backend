@@ -5,6 +5,7 @@ import { Roles } from "@/database/entities/Roles";
 import { Users } from "@/database/entities/Users";
 import { Client } from "./entities/Client";
 import { Historial } from "./entities/Historial";
+import { MaterialsList } from "./entities/MaterialsList";
 import { ProductionOrders } from "./entities/ProductionOrders";
 import { Products } from "./entities/Products";
 import { Providers } from "./entities/Providers";
@@ -32,5 +33,6 @@ export const dataSourceOptionsCommon: DataSourceOptions = {
     Providers,
     ProductionOrders,
     Client,
+    MaterialsList,
   ],
 };

@@ -1,6 +1,7 @@
-import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
+import { Column, Entity, OneToMany } from "typeorm";
 
 import { CoreEntity } from "./CoreEntity";
+import { MaterialsList } from "./MaterialsList";
 
 @Entity()
 export class Products extends CoreEntity {
@@ -36,9 +37,9 @@ export class Products extends CoreEntity {
   })
   planos: string;
 
-  @ManyToOne(() => Products, (products) => products.resourcesList)
-  product: Products;
-
-  @OneToMany(() => Products, (product) => product.product)
-  resourcesList: Products[];
+  @OneToMany(
+    () => MaterialsList,
+    (materialsList) => materialsList.idProdComponente,
+  )
+  public materialsList: MaterialsList[];
 }
