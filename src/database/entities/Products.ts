@@ -1,7 +1,14 @@
-import { Column, Entity, OneToMany } from "typeorm";
+import { Column, Entity, ManyToMany, OneToMany } from "typeorm";
 
 import { CoreEntity } from "./CoreEntity";
 import { MaterialsList } from "./MaterialsList";
+import { Providers } from "./Providers";
+
+export enum ProductType {
+  INSUMOS = "insumos",
+  SENCILLOS = "sencillos",
+  COMPUESTOS = "compuestos",
+}
 
 @Entity()
 export class Products extends CoreEntity {
@@ -14,13 +21,12 @@ export class Products extends CoreEntity {
 
   @Column({
     type: "varchar",
-    unique: true,
     length: 100,
   })
   nombre: string;
 
   @Column({
-    type: "int",
+    type: "float",
   })
   existencia: number;
 
@@ -32,14 +38,22 @@ export class Products extends CoreEntity {
 
   @Column({
     type: "varchar",
-    unique: true,
     length: 500,
   })
   planos: string;
+
+  @Column({
+    type: "enum",
+    enum: ProductType,
+  })
+  productType: ProductType;
 
   @OneToMany(
     () => MaterialsList,
     (materialsList) => materialsList.idProdComponente,
   )
   public materialsList: MaterialsList[];
+
+  @ManyToMany(() => Providers, (providers) => providers.id)
+  providers: Providers[];
 }

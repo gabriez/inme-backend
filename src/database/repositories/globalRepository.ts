@@ -1,6 +1,8 @@
 import type { DataSource, Repository } from "typeorm";
 
 import { Client } from "../entities/Client";
+import { MaterialsList } from "../entities/MaterialsList";
+import { Products } from "../entities/Products";
 import { Providers } from "../entities/Providers";
 import { Users } from "../entities/Users";
 
@@ -8,6 +10,8 @@ interface GlobalRepositoryI {
   clientRepository: Repository<Client>;
   userRepository: Repository<Users>;
   providersRepository: Repository<Providers>;
+  productsRepository: Repository<Products>;
+  materialsListRepository: Repository<MaterialsList>;
 }
 
 export const GlobalRepository: GlobalRepositoryI = {} as GlobalRepositoryI;
@@ -22,6 +26,8 @@ export function buildRepositories(dataSource: DataSource): void {
     clientRepository: dataSource.getRepository(Client),
     userRepository: dataSource.getRepository(Users),
     providersRepository: dataSource.getRepository(Providers),
+    productsRepository: dataSource.getRepository(Products),
+    materialsListRepository: dataSource.getRepository(MaterialsList),
   });
   initialized = true;
   // I don't want the repositories to change

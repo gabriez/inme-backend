@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import type { ParamsDictionary, Query, Send } from "express-serve-static-core";
 import type { Client } from "@/database/entities/Client";
+import type { ProductType } from "@/database/entities/Products";
 import type { Providers } from "@/database/entities/Providers";
 import type { Users } from "../database/entities/Users";
 export interface TypedResponse<ResBody> extends Response {
@@ -35,6 +36,8 @@ export interface IsignInReq
 
 export interface IdParamReq extends RequestAPI<{}, { id: string }> {}
 
+// Clients req
+
 export interface CreateUpdateClientReq
   extends RequestAPI<Client, { id: string }> {}
 
@@ -63,3 +66,44 @@ export interface GetProvidersListReq
       enterpriseName: string;
     }
   > {}
+
+// Products req
+
+export interface ProductsReq {
+  codigo: string;
+  nombre: string;
+  existencia: number;
+  measureUnit: string;
+  planos: string;
+  productType: ProductType;
+  materialsList: {
+    id: number;
+    quantity: number;
+  }[];
+  providersList: {
+    id: number;
+  }[];
+}
+
+export interface UpdateProductExistenceI {
+  quantity: number;
+}
+
+export interface CreateUpdateProductsReq
+  extends RequestAPI<ProductsReq, { id: string }> {}
+
+export interface GetProductsListReq
+  extends RequestAPI<
+    {},
+    {},
+    {
+      limit: string;
+      offset: string;
+      codigo: string;
+      nombre: string;
+      productType: string;
+    }
+  > {}
+
+export interface UpdateProductExistenceReq
+  extends RequestAPI<UpdateProductExistenceI, { id: string }> {}

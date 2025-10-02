@@ -5,6 +5,7 @@ import { Router } from "express";
 // Routes
 import { authRoutes } from "./authRouters";
 import { clientRouters } from "./clientRouters";
+import { productsRouters } from "./productsRouters";
 import { providersRouters } from "./providersRouters";
 import { swaggerDocs } from "./swagger";
 import { userRouters } from "./userRouters";
@@ -89,5 +90,6 @@ export const routes = (app: Express): Express => {
     router.use("/docs", swaggerDocs()),
     router.use("/client", clientRouters()),
     router.use("/providers", providersRouters()),
+    router.use("/products", productsRouters()),
   );
 };

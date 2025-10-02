@@ -1,7 +1,7 @@
 import type { MigrationInterface, QueryRunner } from "typeorm";
 
-export class NewMigration1757562354082 implements MigrationInterface {
-  name = "NewMigration1757562354082";
+export class CoreSchema1759173510552 implements MigrationInterface {
+  name = "CoreSchema1759173510552";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
@@ -31,24 +31,6 @@ export class NewMigration1757562354082 implements MigrationInterface {
             )
         `);
     await queryRunner.query(`
-            CREATE TABLE "products" (
-                "id" SERIAL NOT NULL,
-                "create_at" TIMESTAMP NOT NULL DEFAULT now(),
-                "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
-                "deleted_at" TIMESTAMP,
-                "codigo" character varying(50) NOT NULL,
-                "nombre" character varying(100) NOT NULL,
-                "existencia" integer NOT NULL,
-                "measureUnit" character varying(50) NOT NULL,
-                "planos" character varying(500) NOT NULL,
-                "productId" integer,
-                CONSTRAINT "UQ_e7a41b4ae1811faffbf9da6a55d" UNIQUE ("codigo"),
-                CONSTRAINT "UQ_bca492caee28af042d3cae20fa3" UNIQUE ("nombre"),
-                CONSTRAINT "UQ_4557d9234a9eaa7720782c7f6d1" UNIQUE ("planos"),
-                CONSTRAINT "PK_0806c755e0aca124e67c0cf6d7d" PRIMARY KEY ("id")
-            )
-        `);
-    await queryRunner.query(`
             CREATE TABLE "client" (
                 "id" SERIAL NOT NULL,
                 "create_at" TIMESTAMP NOT NULL DEFAULT now(),
@@ -66,6 +48,18 @@ export class NewMigration1757562354082 implements MigrationInterface {
             )
         `);
     await queryRunner.query(`
+            CREATE TABLE "materials_list" (
+                "id" SERIAL NOT NULL,
+                "create_at" TIMESTAMP NOT NULL DEFAULT now(),
+                "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
+                "deleted_at" TIMESTAMP,
+                "quantity" real NOT NULL,
+                "idProdCompuestoId" integer,
+                "idProdComponenteId" integer,
+                CONSTRAINT "PK_ffc47110a3adbd4200daca6c74b" PRIMARY KEY ("id")
+            )
+        `);
+    await queryRunner.query(`
             CREATE TABLE "providers" (
                 "id" SERIAL NOT NULL,
                 "create_at" TIMESTAMP NOT NULL DEFAULT now(),
@@ -73,15 +67,35 @@ export class NewMigration1757562354082 implements MigrationInterface {
                 "deleted_at" TIMESTAMP,
                 "enterpriseName" character varying(100) NOT NULL,
                 "personContact" character varying(100) NOT NULL,
-                "enterprisePhone" character varying(100) NOT NULL,
+                "enterprisePhone" character varying(22) NOT NULL,
                 "description" character varying(400) NOT NULL,
                 "email" character varying(100) NOT NULL,
-                "ciRif" character varying(50) NOT NULL,
+                "ciRif" character varying(30) NOT NULL,
                 "taxAddress" character varying(200),
                 "address" character varying(200),
                 "website" character varying(300),
                 "instagram" character varying(200),
+                CONSTRAINT "UQ_c6907f7fbf6ea28a5b555826fa7" UNIQUE ("ciRif"),
                 CONSTRAINT "PK_af13fc2ebf382fe0dad2e4793aa" PRIMARY KEY ("id")
+            )
+        `);
+    await queryRunner.query(`
+            CREATE TYPE "public"."products_producttype_enum" AS ENUM('insumos', 'sencillos', 'compuestos')
+        `);
+    await queryRunner.query(`
+            CREATE TABLE "products" (
+                "id" SERIAL NOT NULL,
+                "create_at" TIMESTAMP NOT NULL DEFAULT now(),
+                "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
+                "deleted_at" TIMESTAMP,
+                "codigo" character varying(50) NOT NULL,
+                "nombre" character varying(100) NOT NULL,
+                "existencia" double precision NOT NULL,
+                "measureUnit" character varying(50) NOT NULL,
+                "planos" character varying(500) NOT NULL,
+                "productType" "public"."products_producttype_enum" NOT NULL,
+                CONSTRAINT "UQ_e7a41b4ae1811faffbf9da6a55d" UNIQUE ("codigo"),
+                CONSTRAINT "PK_0806c755e0aca124e67c0cf6d7d" PRIMARY KEY ("id")
             )
         `);
     await queryRunner.query(`
@@ -159,8 +173,12 @@ export class NewMigration1757562354082 implements MigrationInterface {
             CREATE INDEX "IDX_55a4e65b9491741d55872d2811" ON "providers_products_products" ("productsId")
         `);
     await queryRunner.query(`
-            ALTER TABLE "products"
-            ADD CONSTRAINT "FK_7b3b507508cd0f86a5b2e923459" FOREIGN KEY ("productId") REFERENCES "products"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+            ALTER TABLE "materials_list"
+            ADD CONSTRAINT "FK_66c7324182cb57a166723f611bb" FOREIGN KEY ("idProdCompuestoId") REFERENCES "products"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
+    await queryRunner.query(`
+            ALTER TABLE "materials_list"
+            ADD CONSTRAINT "FK_f1eac4d98586b9003345ae9855b" FOREIGN KEY ("idProdComponenteId") REFERENCES "products"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
     await queryRunner.query(`
             ALTER TABLE "production_orders"
@@ -229,7 +247,10 @@ export class NewMigration1757562354082 implements MigrationInterface {
             ALTER TABLE "production_orders" DROP CONSTRAINT "FK_8584be8f232016b2c24a4e12589"
         `);
     await queryRunner.query(`
-            ALTER TABLE "products" DROP CONSTRAINT "FK_7b3b507508cd0f86a5b2e923459"
+            ALTER TABLE "materials_list" DROP CONSTRAINT "FK_f1eac4d98586b9003345ae9855b"
+        `);
+    await queryRunner.query(`
+            ALTER TABLE "materials_list" DROP CONSTRAINT "FK_66c7324182cb57a166723f611bb"
         `);
     await queryRunner.query(`
             DROP INDEX "public"."IDX_55a4e65b9491741d55872d2811"
@@ -262,13 +283,19 @@ export class NewMigration1757562354082 implements MigrationInterface {
             DROP TYPE "public"."production_orders_orderstate_enum"
         `);
     await queryRunner.query(`
+            DROP TABLE "products"
+        `);
+    await queryRunner.query(`
+            DROP TYPE "public"."products_producttype_enum"
+        `);
+    await queryRunner.query(`
             DROP TABLE "providers"
         `);
     await queryRunner.query(`
-            DROP TABLE "client"
+            DROP TABLE "materials_list"
         `);
     await queryRunner.query(`
-            DROP TABLE "products"
+            DROP TABLE "client"
         `);
     await queryRunner.query(`
             DROP TABLE "users"
