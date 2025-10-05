@@ -31,6 +31,11 @@ export class Products extends CoreEntity {
   existencia: number;
 
   @Column({
+    type: "float",
+  })
+  existenciaReservada: number;
+
+  @Column({
     type: "varchar",
     length: 50,
   })

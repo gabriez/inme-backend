@@ -8,11 +8,13 @@ import type {
 import { In } from "typeorm";
 import { z } from "zod";
 
+import { HistorialAction } from "@/database/entities/Historial";
 import { ProductType } from "@/database/entities/Products";
 import { GlobalRepository } from "@/database/repositories/globalRepository";
 
 const ProductsRepository = GlobalRepository.productsRepository;
 const ProvidersRepository = GlobalRepository.providersRepository;
+const ClientRepository = GlobalRepository.clientRepository;
 
 const validateProductsSchema = z.object({
   codigo: z.string().min(1).max(50),
@@ -172,7 +174,7 @@ export async function validateMaterialsExistence(
   }
 }
 
-export function validateProductQuantityMiddleware(
+export async function validateProdExistenceChangeMiddleware(
   req: UpdateProductExistenceReq,
   res: ResponseAPI,
   next: NextFunction,
@@ -186,7 +188,82 @@ export function validateProductQuantityMiddleware(
     return;
   }
   try {
-    const { quantity } = req.body;
+    const { quantity, action, description, provider, client } = req.body;
+
+    if (provider?.id) {
+      const providerExist = await ProvidersRepository.exists({
+        where: { id: provider.id },
+      });
+      if (!providerExist) {
+        resErr.json({
+          status: false,
+          message: "El proveedor seleccionado no existe",
+        });
+        return;
+      }
+    }
+
+    if (client?.id) {
+      const clientExist = await ClientRepository.exists({
+        where: { id: client.id },
+      });
+      if (!clientExist) {
+        resErr.json({
+          status: false,
+          message: "El cliente seleccionado no existe",
+        });
+        return;
+      }
+    }
+
+    if (description.length > 300) {
+      resErr.json({
+        status: false,
+        message: "La descripción debe tener un máximo de 300 caracteres",
+      });
+      return;
+    }
+
+    if (description.length < 20) {
+      resErr.json({
+        status: false,
+        message: "La descripción debe tener un mínimo de 20 caracteres",
+      });
+      return;
+    }
+
+    if (!action || action.length === 0) {
+      resErr.json({
+        status: false,
+        message:
+          "No se envió la acción correspondiente. Valores válidos: INGRESO, EGRESO, VENTA, VARIOS",
+      });
+    }
+
+    const validActions = Object.values(HistorialAction);
+    if (!validActions.includes(action as HistorialAction)) {
+      resErr.json({
+        status: false,
+        message: `HistorialAction inválido. Los valores válidos son: INGRESO, EGRESO, VENTA, VARIOS`,
+      });
+      return;
+    }
+    const enumAction = HistorialAction[action as keyof typeof HistorialAction];
+
+    if (
+      enumAction === HistorialAction.GASTODEPRODUCCION ||
+      enumAction === HistorialAction.INGRESOPORPRODUCCION ||
+      enumAction === HistorialAction.ORDENPRODUCCION
+    ) {
+      resErr.json({
+        status: false,
+        message: `HistorialAction inválido. Los valores válidos para ingreso y egreso son: INGRESO, EGRESO, VENTA, VARIOS`,
+      });
+      return;
+    }
+
+    req.body.actionEnum = enumAction;
+
     if (quantity < 0) {
       resErr.json({
         status: false,

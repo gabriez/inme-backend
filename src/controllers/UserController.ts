@@ -7,3 +7,11 @@ export const profile = (req: RequestAPI, res: ResponseAPI) => {
     message: "Éxito!",
   });
 };
+
+// export const GetProfile = (req: RequestAPI, res: ResponseAPI) => {};
+
+// export const GetUsers = (req: RequestAPI, res: ResponseAPI) => {};
+
+// export const EditProfile = (req: RequestAPI, res: ResponseAPI) => {};
+
+// export const ChangePassword = (req: RequestAPI, res: ResponseAPI) => {};

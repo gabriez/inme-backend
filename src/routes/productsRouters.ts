@@ -12,8 +12,8 @@ import { verifyToken } from "@/middlewares/authJWT";
 import { validateIdMiddleware } from "@/middlewares/validations/validateIdMiddleware";
 import {
   validateMaterialsExistence,
+  validateProdExistenceChangeMiddleware,
   validateProductFields,
-  validateProductQuantityMiddleware,
   validateProvidersExistence,
 } from "@/middlewares/validations/validateProductsMiddleware";
 
@@ -301,12 +301,33 @@ export const productsRouters = () => {
    *             type: object
    *             required:
    *               - quantity
+   *               - description
+   *               - action
    *             properties:
    *               quantity:
    *                 type: number
    *                 description: Cantidad a aumentar en el inventario
+   *               description:
+   *                 type: string
+   *                 maxLength: 300
+   *                 description: Descripción del movimiento de inventario
+   *               action:
+   *                 type: string
+   *                 enum: [INGRESO, VARIOS]
+   *                 description: Tipo de acción para el historial (solo INGRESO o VARIOS)
+   *               provider:
+   *                 type: object
+   *                 description: Proveedor asociado al ingreso (opcional)
+   *                 properties:
+   *                   id:
+   *                     type: number
+   *                     description: ID del proveedor
    *             example:
    *               quantity: 50
+   *               description: "Ingreso de materiales del proveedor ABC"
+   *               action: "INGRESO"
+   *               provider:
+   *                 id: 1
    *     responses:
    *       200:
    *         description: Producto cargado exitosamente
@@ -316,7 +337,7 @@ export const productsRouters = () => {
    *               $ref: '#/components/schemas/GenericResponseSchema'
    *             example:
    *               status: true
-   *               message: "Producto descargado exitosamente"
+   *               message: "Producto cargado exitosamente"
    *               data:
    *                 id: 1
    *                 codigo: "PROD-001"
@@ -373,6 +394,24 @@ export const productsRouters = () => {
    *                   status: false
    *                   data: null
    *                   message: "La cantidad debe ser mayor a 0"
+   *               invalidAction:
+   *                 summary: Acción inválida para cargar
+   *                 value:
+   *                   status: false
+   *                   data: null
+   *                   message: "Los valores para cargar deben ser INGRESO O VARIOS"
+   *               invalidDescription:
+   *                 summary: Descripción muy larga
+   *                 value:
+   *                   status: false
+   *                   data: null
+   *                   message: "La descripción debe tener un máximo de 300 caracteres"
+   *               providerNotExist:
+   *                 summary: Proveedor no existe
+   *                 value:
+   *                   status: false
+   *                   data: null
+   *                   message: "El proveedor seleccionado no existe"
    *               emptyBody:
    *                 summary: El cuerpo de la solicitud está vacío
    *                 value:
@@ -387,7 +426,7 @@ export const productsRouters = () => {
    */
   router.post(
     "/charge/:id",
-    [verifyToken, validateIdMiddleware, validateProductQuantityMiddleware],
+    [verifyToken, validateIdMiddleware, validateProdExistenceChangeMiddleware],
     ChargeProductsController,
   );
   /**
@@ -413,12 +452,33 @@ export const productsRouters = () => {
    *             type: object
    *             required:
    *               - quantity
+   *               - description
+   *               - action
    *             properties:
    *               quantity:
    *                 type: number
    *                 description: Cantidad a disminuir del inventario
+   *               description:
+   *                 type: string
+   *                 maxLength: 300
+   *                 description: Descripción del movimiento de inventario
+   *               action:
+   *                 type: string
+   *                 enum: [EGRESO, VENTA, VARIOS]
+   *                 description: Tipo de acción para el historial (EGRESO, VENTA o VARIOS)
+   *               client:
+   *                 type: object
+   *                 description: Cliente asociado a la venta/egreso (opcional)
+   *                 properties:
+   *                   id:
+   *                     type: number
+   *                     description: ID del cliente
    *             example:
    *               quantity: 10
+   *               description: "Venta a cliente XYZ"
+   *               action: "VENTA"
+   *               client:
+   *                 id: 5
    *     responses:
    *       200:
    *         description: Producto descargado exitosamente
@@ -494,6 +554,24 @@ export const productsRouters = () => {
    *                   status: false
    *                   data: null
    *                   message: "La cantidad debe ser mayor a 0"
+   *               invalidAction:
+   *                 summary: Acción inválida para descargar
+   *                 value:
+   *                   status: false
+   *                   data: null
+   *                   message: "Los valores para descargar deben ser VENTA, EGRESO O VARIOS"
+   *               invalidDescription:
+   *                 summary: Descripción muy larga
+   *                 value:
+   *                   status: false
+   *                   data: null
+   *                   message: "La descripción debe tener un máximo de 300 caracteres"
+   *               clientNotExist:
+   *                 summary: Cliente no existe
+   *                 value:
+   *                   status: false
+   *                   data: null
+   *                   message: "El cliente seleccionado no existe"
    *               emptyBody:
    *                 summary: El cuerpo de la solicitud está vacío
    *                 value:
@@ -508,7 +586,7 @@ export const productsRouters = () => {
    */
   router.post(
     "/discharge/:id",
-    [verifyToken, validateIdMiddleware, validateProductQuantityMiddleware],
+    [verifyToken, validateIdMiddleware, validateProdExistenceChangeMiddleware],
     DischargeProductsController,
   );
 

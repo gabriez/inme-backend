@@ -1,6 +1,8 @@
 import type { Request, Response } from "express";
 import type { ParamsDictionary, Query, Send } from "express-serve-static-core";
 import type { Client } from "@/database/entities/Client";
+import type { HistorialAction } from "@/database/entities/Historial";
+import type { OrderState } from "@/database/entities/ProductionOrders";
 import type { ProductType } from "@/database/entities/Products";
 import type { Providers } from "@/database/entities/Providers";
 import type { Users } from "../database/entities/Users";
@@ -87,6 +89,11 @@ export interface ProductsReq {
 
 export interface UpdateProductExistenceI {
   quantity: number;
+  description: string;
+  action: string; // it should accept only keyof typeof HistorialAction. This value comes from frontend and will be parsed into HistorialAction
+  actionEnum: HistorialAction;
+  provider?: { id: number };
+  client?: { id: number };
 }
 
 export interface CreateUpdateProductsReq
@@ -107,3 +114,54 @@ export interface GetProductsListReq
 
 export interface UpdateProductExistenceReq
   extends RequestAPI<UpdateProductExistenceI, { id: string }> {}
+
+// Production orders
+
+export interface ProductsOrdersI {
+  cantidadProductoFabricado: number;
+  endDate: Date;
+  responsables: string;
+  product: { id: number };
+}
+
+export interface CreateUpdateProductsOrdersReq
+  extends RequestAPI<ProductsOrdersI, { id: string }> {}
+
+export interface GetProductsOrdersListReq
+  extends RequestAPI<
+    {},
+    {},
+    {
+      limit: string;
+      offset: string;
+      product: string;
+      endDate: string;
+      realEndDate: string;
+      startDate: string;
+      orderState: string;
+    }
+  > {}
+
+export interface ChangeOrderStateReq
+  extends RequestAPI<
+    { orderState: string; orderStateEnum: OrderState },
+    { id: string }
+  > {}
+
+// Historial
+export interface GetHistorialReq
+  extends RequestAPI<
+    {},
+    {},
+    {
+      limit: string;
+      offset: string;
+      action: string;
+      provider: string;
+      client: string;
+      product: string;
+      productionOrder: string;
+      endDate: string;
+      startDate: string;
+    }
+  > {}

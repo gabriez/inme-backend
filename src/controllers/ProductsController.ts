@@ -11,11 +11,13 @@ import type {
 
 import { Like } from "typeorm";
 
+import { HistorialAction } from "@/database/entities/Historial";
 import { ProductType } from "@/database/entities/Products";
 import { GlobalRepository } from "@/database/repositories/globalRepository";
 
 const ProductsRepository = GlobalRepository.productsRepository;
 const MaterialsListRepository = GlobalRepository.materialsListRepository;
+const HistorialRepository = GlobalRepository.historialRepository;
 
 export const GetProductsController = async (
   req: GetProductsListReq,
@@ -314,7 +316,7 @@ export const DischargeProductsController = async (
       return;
     }
 
-    const { quantity } = req.body;
+    const { quantity, actionEnum, description, client } = req.body;
 
     const newQuantity = product.existencia - quantity;
     if (newQuantity < 0) {
@@ -325,8 +327,39 @@ export const DischargeProductsController = async (
       return;
     }
 
+    if (
+      actionEnum !== HistorialAction.EGRESO &&
+      actionEnum !== HistorialAction.VENTA &&
+      actionEnum !== HistorialAction.VARIOS
+    ) {
+      res.status(422).json({
+        status: false,
+        message: "Los valores para descargar deben ser VENTA, EGRESO O VARIOS",
+      });
+      return;
+    }
+
+    if (actionEnum === HistorialAction.VENTA && !client) {
+      res.status(422).json({
+        status: false,
+        message: "No se puede registrar una venta sin un cliente",
+      });
+    }
+
+    const story = HistorialRepository.create({
+      action: actionEnum,
+      cantidad: quantity,
+      description,
+      product,
+      client: client ? { id: client.id } : undefined,
+    });
+
+    //TODO: descargar productos en historial
     product.existencia = newQuantity;
-    await ProductsRepository.save(product);
+    await Promise.all([
+      ProductsRepository.save(product),
+      HistorialRepository.save(story),
+    ]);
     res.status(200).json({
       status: true,
       message: "Producto descargado exitosamente",
@@ -365,16 +398,37 @@ export const ChargeProductsController = async (
       });
       return;
     }
+    //TODO: cargar productos en historial
 
-    const { quantity } = req.body;
+    const { quantity, actionEnum, description, provider } = req.body;
 
+    if (
+      actionEnum !== HistorialAction.INGRESO &&
+      actionEnum !== HistorialAction.VARIOS
+    ) {
+      res.status(422).json({
+        status: false,
+        message: "Los valores para cargar deben ser INGRESO O VARIOS",
+      });
+      return;
+    }
+    const story = HistorialRepository.create({
+      action: actionEnum,
+      cantidad: quantity,
+      description,
+      product,
+      provider: provider ? { id: provider.id } : undefined,
+    });
     const newQuantity = product.existencia + quantity;
 
     product.existencia = newQuantity;
-    await ProductsRepository.save(product);
+    await Promise.all([
+      ProductsRepository.save(product),
+      HistorialRepository.save(story),
+    ]);
     res.status(200).json({
       status: true,
-      message: "Producto descargado exitosamente",
+      message: "Producto cargado exitosamente",
       data: product,
     });
   } catch (error) {

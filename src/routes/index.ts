@@ -5,6 +5,8 @@ import { Router } from "express";
 // Routes
 import { authRoutes } from "./authRouters";
 import { clientRouters } from "./clientRouters";
+import { historialRouters } from "./historialRouters";
+import { productionOrderRoutes } from "./productionOrderRouters";
 import { productsRouters } from "./productsRouters";
 import { providersRouters } from "./providersRouters";
 import { swaggerDocs } from "./swagger";
@@ -91,5 +93,7 @@ export const routes = (app: Express): Express => {
     router.use("/client", clientRouters()),
     router.use("/providers", providersRouters()),
     router.use("/products", productsRouters()),
+    router.use("/production-order", productionOrderRoutes()),
+    router.use("/history", historialRouters()),
   );
 };

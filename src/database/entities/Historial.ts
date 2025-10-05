@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, OneToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
 import { Client } from "./Client";
 import { CoreEntity } from "./CoreEntity";
@@ -6,10 +6,14 @@ import { ProductionOrders } from "./ProductionOrders";
 import { Products } from "./Products";
 import { Providers } from "./Providers";
 
-enum HistorialAction {
+export enum HistorialAction {
   INGRESO = "ingreso",
   EGRESO = "egreso",
-  ORDENPRODUCCION = "Order de producción",
+  VENTA = "venta",
+  ORDENPRODUCCION = "Orden de producción",
+  VARIOS = "varios",
+  GASTODEPRODUCCION = "Gasto por orden de producción",
+  INGRESOPORPRODUCCION = "Ingreso por producción",
 }
 
 @Entity()
@@ -31,19 +35,19 @@ export class Historial extends CoreEntity {
   })
   cantidad: number;
 
-  @OneToOne(() => Products)
+  @ManyToOne(() => Products, { nullable: true })
   @JoinColumn()
-  product: Products;
+  product?: Products;
 
-  @OneToOne(() => Client)
+  @ManyToOne(() => Client, { nullable: true })
   @JoinColumn()
-  client: Client;
+  client?: Client;
 
-  @OneToOne(() => Providers)
+  @ManyToOne(() => Providers, { nullable: true })
   @JoinColumn()
-  provider: Providers;
+  provider?: Providers;
 
-  @OneToOne(() => ProductionOrders)
+  @ManyToOne(() => ProductionOrders, { nullable: true })
   @JoinColumn()
-  productionOrder: ProductionOrders;
+  productionOrder?: ProductionOrders;
 }

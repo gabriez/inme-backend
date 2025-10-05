@@ -1,9 +1,9 @@
-import { Column, Entity, JoinColumn, OneToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
 import { CoreEntity } from "./CoreEntity";
 import { Products } from "./Products";
 
-enum OrderState {
+export enum OrderState {
   EnProceso = "En proceso",
   Ejecutada = "Ejecutada",
   Cancelada = "Cancelada",
@@ -45,7 +45,7 @@ export class ProductionOrders extends CoreEntity {
   })
   responsables: string;
 
-  @OneToOne(() => Products)
+  @ManyToOne(() => Products)
   @JoinColumn()
   product: Products;
 }
