@@ -247,7 +247,7 @@ export const productionOrderRoutes = (): Router => {
   /**
    * @swagger
    * /api/v1.0/production-orders/update-state/{id}:
-   *   post:
+   *   patch:
    *     summary: Cambiar el estado de una orden de producción
    *     tags: [Órdenes de Producción]
    *     security:
@@ -337,7 +337,7 @@ export const productionOrderRoutes = (): Router => {
    *             schema:
    *               $ref: '#/components/schemas/ErrorUnexpectedSchema'
    */
-  routerRoot.post(
+  routerRoot.patch(
     "/update-state/:id",
     [verifyToken, validateIdMiddleware, validateOrderState],
     ChangeProductionOrderStatusController,
