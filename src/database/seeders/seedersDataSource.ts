@@ -1,12 +1,13 @@
 import { DataSource } from "typeorm";
 
 import { dataSourceOptionsCommon } from "@/database/databaseConfig";
+import { CoreSeeder1649938942846 } from "./CoreSeders";
 /* migrations */
 // import { CoreSeeder1649938942846 } from "./CoreSeders";
 
 const AppDataSource = new DataSource({
   ...dataSourceOptionsCommon,
-  migrations: [],
+  migrations: [CoreSeeder1649938942846],
 });
 
 export default AppDataSource;

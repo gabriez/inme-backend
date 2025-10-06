@@ -8,8 +8,8 @@ import {
   GetProductsController,
   UpdateProductController,
 } from "@/controllers/ProductsController";
-import { verifyToken } from "@/middlewares/authJWT";
-import { validateIdMiddleware } from "@/middlewares/validations/validateIdMiddleware";
+import { isUser, verifyToken } from "@/middlewares/authJWT";
+import { validateIdMiddleware } from "@/middlewares/validations/generalValidationMiddlewares";
 import {
   validateMaterialsExistence,
   validateProdExistenceChangeMiddleware,
@@ -270,6 +270,8 @@ export const productsRouters = () => {
     .post(
       [
         verifyToken,
+        isUser,
+
         validateIdMiddleware,
         validateProductFields,
         validateMaterialsExistence,
@@ -426,7 +428,12 @@ export const productsRouters = () => {
    */
   router.post(
     "/charge/:id",
-    [verifyToken, validateIdMiddleware, validateProdExistenceChangeMiddleware],
+    [
+      verifyToken,
+      isUser,
+      validateIdMiddleware,
+      validateProdExistenceChangeMiddleware,
+    ],
     ChargeProductsController,
   );
   /**
@@ -586,7 +593,12 @@ export const productsRouters = () => {
    */
   router.post(
     "/discharge/:id",
-    [verifyToken, validateIdMiddleware, validateProdExistenceChangeMiddleware],
+    [
+      verifyToken,
+      isUser,
+      validateIdMiddleware,
+      validateProdExistenceChangeMiddleware,
+    ],
     DischargeProductsController,
   );
 
@@ -796,6 +808,7 @@ export const productsRouters = () => {
     .put(
       [
         verifyToken,
+        isUser,
         validateIdMiddleware,
         validateProductFields,
         validateMaterialsExistence,

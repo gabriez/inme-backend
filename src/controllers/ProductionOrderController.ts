@@ -99,10 +99,16 @@ const processProductionOrderCompletion = async (
       cantidad: totalMaterialQuantity,
       product,
       productionOrder,
-      description: `Gasto por orden de producción ${productionOrder.id}`,
+      description: `Gasto por orden de producción número ${productionOrder.id}`,
     });
 
-    historialChanges.push(story);
+    const productionOrderStory = HistorialRepository.create({
+      action: HistorialAction.ORDENPRODUCCION,
+      description: `Orden de producción número ${productionOrder.id} culminada`,
+      productionOrder: productionOrder,
+    });
+
+    historialChanges.push(story, productionOrderStory);
     materialsChanges.push(product);
   }
 

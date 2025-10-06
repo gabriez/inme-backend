@@ -7,8 +7,8 @@ import {
   UpdateProductionOrderController,
 } from "@/controllers/ProductionOrderController";
 import { GetProductByIdController } from "@/controllers/ProductsController";
-import { verifyToken } from "@/middlewares/authJWT";
-import { validateIdMiddleware } from "@/middlewares/validations/validateIdMiddleware";
+import { isUser, verifyToken } from "@/middlewares/authJWT";
+import { validateIdMiddleware } from "@/middlewares/validations/generalValidationMiddlewares";
 import {
   validateOrderState,
   validateProductionOrderFieldsMiddleware,
@@ -240,7 +240,7 @@ export const productionOrderRoutes = (): Router => {
     .route("/")
     .get([verifyToken], GetProductionOrdersController)
     .post(
-      [verifyToken, validateProductionOrderFieldsMiddleware],
+      [verifyToken, isUser, validateProductionOrderFieldsMiddleware],
       CreateProductionOrderController,
     );
 
@@ -339,7 +339,7 @@ export const productionOrderRoutes = (): Router => {
    */
   routerRoot.patch(
     "/update-state/:id",
-    [verifyToken, validateIdMiddleware, validateOrderState],
+    [verifyToken, isUser, validateIdMiddleware, validateOrderState],
     ChangeProductionOrderStatusController,
   );
   /**
@@ -475,6 +475,7 @@ export const productionOrderRoutes = (): Router => {
     .put(
       [
         verifyToken,
+        isUser,
         validateIdMiddleware,
         validateProductionOrderFieldsMiddleware,
       ],

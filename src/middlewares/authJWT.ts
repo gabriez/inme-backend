@@ -43,15 +43,16 @@ async function verifyToken(
   }
 }
 
-function isAutorized({ rolToCheck, user }: IAuthorization) {
+function isAuthorized({ rolToCheck, user }: IAuthorization) {
   return user?.rol.some((el) => el.rol === rolToCheck);
 }
 
 function isSuperAdmin(req: RequestAPI, resp: ResponseAPI, next: NextFunction) {
-  if (!isAutorized({ rolToCheck: "SUPERADMIN", user: req.user })) {
+  if (!isAuthorized({ rolToCheck: "SUPERADMIN", user: req.user })) {
     resp.status(403).json({
       status: false,
-      message: "Forbidden!",
+      message:
+        "Prohibido! Solo administradores pueden acceder a estas funciones",
     });
 
     return;
@@ -60,4 +61,25 @@ function isSuperAdmin(req: RequestAPI, resp: ResponseAPI, next: NextFunction) {
   next();
 }
 
-export { isSuperAdmin, verifyToken };
+function isUser(req: RequestAPI, res: ResponseAPI, next: NextFunction) {
+  const Roles = ["USER", "SUPERADMIN"];
+  let authorized = false;
+  for (const rolToCheck of Roles) {
+    if (isAuthorized({ rolToCheck, user: req.user })) {
+      authorized = true;
+      break;
+    }
+  }
+  if (!authorized) {
+    res.status(403).json({
+      status: false,
+      message:
+        "Prohibido! Solo administradores y usuarios normales pueden acceder a estas funciones",
+    });
+
+    return;
+  }
+  next();
+}
+
+export { isSuperAdmin, isUser, verifyToken };

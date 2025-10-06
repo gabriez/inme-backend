@@ -165,3 +165,28 @@ export interface GetHistorialReq
       startDate: string;
     }
   > {}
+
+// Users
+export interface UpdateUser {
+  email: string;
+  rol: {
+    id: number;
+  };
+  name: string;
+  password: string;
+}
+
+export interface UpdateUserReq extends RequestAPI<UpdateUser, { id: string }> {}
+export interface GetUsersReq
+  extends RequestAPI<
+    {},
+    {},
+    {
+      limit: string;
+      offset: string;
+      username: string;
+      email: string;
+      rol: string;
+      nombre: string;
+    }
+  > {}

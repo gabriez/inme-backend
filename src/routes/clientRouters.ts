@@ -6,9 +6,9 @@ import {
   getClients,
   updateClient,
 } from "@/controllers/ClientController";
-import { verifyToken } from "../middlewares/authJWT";
+import { isSuperAdmin, verifyToken } from "../middlewares/authJWT";
 import { validateClientMiddleware } from "../middlewares/validations/clientRequest";
-import { validateIdMiddleware } from "../middlewares/validations/validateIdMiddleware";
+import { validateIdMiddleware } from "../middlewares/validations/generalValidationMiddlewares";
 
 /**
  * @swagger
@@ -211,7 +211,7 @@ export const clientRouters = () => {
   routerRoot
     .route("/")
     .get(verifyToken, getClients)
-    .post([verifyToken, validateClientMiddleware], createClient);
+    .post([verifyToken, isSuperAdmin, validateClientMiddleware], createClient);
 
   /**
    * @swagger
@@ -392,7 +392,12 @@ export const clientRouters = () => {
     .route("/:id")
     .get([verifyToken, validateIdMiddleware], getClientById)
     .put(
-      [verifyToken, validateIdMiddleware, validateClientMiddleware],
+      [
+        verifyToken,
+        isSuperAdmin,
+        validateIdMiddleware,
+        validateClientMiddleware,
+      ],
       updateClient,
     );
 

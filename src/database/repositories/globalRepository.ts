@@ -6,6 +6,7 @@ import { MaterialsList } from "../entities/MaterialsList";
 import { ProductionOrders } from "../entities/ProductionOrders";
 import { Products } from "../entities/Products";
 import { Providers } from "../entities/Providers";
+import { Roles } from "../entities/Roles";
 import { Users } from "../entities/Users";
 
 interface GlobalRepositoryI {
@@ -16,6 +17,7 @@ interface GlobalRepositoryI {
   materialsListRepository: Repository<MaterialsList>;
   productionOrderRepository: Repository<ProductionOrders>;
   historialRepository: Repository<Historial>;
+  rolesRepository: Repository<Roles>;
 }
 
 export const GlobalRepository: GlobalRepositoryI = {} as GlobalRepositoryI;
@@ -34,6 +36,7 @@ export function buildRepositories(dataSource: DataSource): void {
     materialsListRepository: dataSource.getRepository(MaterialsList),
     productionOrderRepository: dataSource.getRepository(ProductionOrders),
     historialRepository: dataSource.getRepository(Historial),
+    rolesRepository: dataSource.getRepository(Roles),
   });
   initialized = true;
   // I don't want the repositories to change

@@ -6,9 +6,9 @@ import {
   getProvidersController,
   updateProviderController,
 } from "@/controllers/ProvidersController";
-import { verifyToken } from "@/middlewares/authJWT";
+import { isSuperAdmin, verifyToken } from "@/middlewares/authJWT";
+import { validateIdMiddleware } from "@/middlewares/validations/generalValidationMiddlewares";
 import { providersRequestMiddleware } from "@/middlewares/validations/providersRequestMiddleware";
-import { validateIdMiddleware } from "@/middlewares/validations/validateIdMiddleware";
 
 /**
  * @swagger
@@ -232,7 +232,10 @@ export const providersRouters = () => {
   routerRoot
     .route("/")
     .get(verifyToken, getProvidersController)
-    .post([verifyToken, providersRequestMiddleware], createProvidersController);
+    .post(
+      [verifyToken, isSuperAdmin, providersRequestMiddleware],
+      createProvidersController,
+    );
 
   /**
    * @swagger
@@ -417,7 +420,12 @@ export const providersRouters = () => {
     .route("/:id")
     .get([verifyToken, validateIdMiddleware], getProviderByIdController)
     .put(
-      [verifyToken, validateIdMiddleware, providersRequestMiddleware],
+      [
+        verifyToken,
+        isSuperAdmin,
+        validateIdMiddleware,
+        providersRequestMiddleware,
+      ],
       updateProviderController,
     );
 

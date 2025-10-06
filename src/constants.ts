@@ -13,4 +13,4 @@ export const DB = {
   ssl: process.env.DB_SSL === "true",
 };
 
-export const DEFAULT_ROLES = ["USER", "SUPERADMIN"];
+export const DEFAULT_ROLES = ["READER", "USER", "SUPERADMIN"];

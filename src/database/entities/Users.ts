@@ -1,5 +1,12 @@
 import bcrypt from "bcryptjs";
-import { BeforeInsert, Column, Entity, JoinTable, ManyToMany } from "typeorm";
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+} from "typeorm";
 
 import { CoreEntity } from "./CoreEntity";
 import { Roles } from "./Roles";
@@ -39,10 +46,20 @@ export class Users extends CoreEntity {
   })
   password: string;
 
+  @Column({
+    type: "boolean",
+    default: false,
+  })
+  verified: boolean;
+
   @BeforeInsert()
+  @BeforeUpdate()
   async encryptPassword() {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+    // Solo encriptar si la contraseña ha cambiado (no está ya hasheada)
+    if (this.password && !this.password.startsWith("$2")) {
+      const salt = await bcrypt.genSalt(10);
+      this.password = await bcrypt.hash(this.password, salt);
+    }
   }
 
   async comparePassword(password: string) {

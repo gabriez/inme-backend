@@ -16,3 +16,5 @@ export function validateIdMiddleware(
   }
   next();
 }
+
+// TODO: crear middleware para validar limit y offset

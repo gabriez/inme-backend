@@ -10,14 +10,20 @@ export async function userSeeder(queryRunner: QueryRunner) {
 
   const rolSuperadmin = await RolesRepository.findOneBy({ rol: "SUPERADMIN" });
 
-  if (!rolSuperadmin) return;
+  const username = process.env.USERNAME;
+  const password = process.env.PASSWORD;
+  const email = process.env.EMAIL;
+
+  if (!rolSuperadmin || !username || !password || !email) return;
 
   const users = UserRepository.create([
     {
+      email,
       name: "superadmin",
-      username: "superadmin",
-      password: "123456",
+      username,
+      password,
       rol: [rolSuperadmin],
+      verified: true,
     },
   ]);
 

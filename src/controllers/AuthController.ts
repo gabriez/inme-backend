@@ -12,16 +12,29 @@ import { GlobalRepository } from "@/database/repositories/globalRepository";
 import { jwtSecret } from "../constants";
 
 export function createToken(user: Users) {
-  const { id, username } = user;
-  return jwt.sign({ username, id }, jwtSecret, {
+  console.log(user);
+  const { id, username, rol } = user;
+  return jwt.sign({ username, id, rol }, jwtSecret, {
     expiresIn: 86_400 /* 1 day */,
   });
 }
 const UserRepository = GlobalRepository.userRepository;
+const RolesRepository = GlobalRepository.rolesRepository;
 
 export const signUp = async (req: IsignUpReq, res: ResponseAPI) => {
   try {
     const { password, username, name, email } = req.body ?? {};
+
+    const rolReader = await RolesRepository.findOneBy({ rol: "READER" });
+
+    if (!rolReader) {
+      res.status(500).json({
+        status: false,
+        message:
+          "Error del servidor para asignar el rol básico. Comuníquese con el equipo técnico",
+      });
+      return;
+    }
 
     if (!username) {
       res.status(422).json({
@@ -57,6 +70,7 @@ export const signUp = async (req: IsignUpReq, res: ResponseAPI) => {
       username,
       password,
       email,
+      rol: [rolReader],
     });
 
     await UserRepository.save(newUser);
@@ -96,13 +110,21 @@ export const signIn = async (req: IsignInReq, res: ResponseAPI) => {
       return;
     }
 
-    const user = await UserRepository.findOneBy([
-      { username },
-      { email: username },
-    ]);
+    const user = await UserRepository.findOne({
+      select: {
+        email: true,
+        name: true,
+        username: true,
+        id: true,
+        rol: { id: true, rol: true },
+        verified: true,
+        password: true,
+      },
+      where: [{ username }, { email: username }],
+    });
 
     if (!user) {
-      res.status(422).json({
+      res.status(404).json({
         data: null,
         status: false,
         message: "El usuario no existe",
@@ -110,8 +132,17 @@ export const signIn = async (req: IsignInReq, res: ResponseAPI) => {
 
       return;
     }
+    if (!user.verified) {
+      res.status(403).json({
+        status: false,
+        message: "El usuario no ha sido verificado",
+      });
+      return;
+    }
+    console.log(password);
 
     const isMatch = await user.comparePassword(password);
+    console.log(password);
 
     if (isMatch) {
       res.status(200).json({

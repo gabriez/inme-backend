@@ -107,6 +107,18 @@ export const CreateProductsController = async (
       measureUnit,
       providersList = [],
     } = req.body ?? {};
+
+    const productByCode = await ProductsRepository.findOneBy({
+      codigo,
+    });
+    if (productByCode) {
+      res.status(409).json({
+        status: false,
+        message: "Ya existe un producto con el mismo codigo",
+      });
+      return;
+    }
+
     const product = ProductsRepository.create({
       codigo,
       nombre,
@@ -223,6 +235,7 @@ export const UpdateProductController = async (
     }
 
     Object.assign(product, {
+      codigo,
       nombre,
       planos,
       productType,
@@ -289,9 +302,6 @@ export const UpdateProductController = async (
   }
 };
 
-// These two endpoints will interact with the history table
-// TODO: Implement history table
-
 export const DischargeProductsController = async (
   req: UpdateProductExistenceReq,
   res: ResponseAPI,
@@ -344,6 +354,7 @@ export const DischargeProductsController = async (
         status: false,
         message: "No se puede registrar una venta sin un cliente",
       });
+      return;
     }
 
     const story = HistorialRepository.create({
