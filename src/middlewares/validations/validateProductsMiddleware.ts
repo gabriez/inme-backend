@@ -141,7 +141,7 @@ export async function validateMaterialsExistence(
       });
       return;
     }
-    let productType: ProductType = ProductType.SENCILLOS;
+    let productType: ProductType = ProductType.INSUMOS;
     for (const material of materialsListLookedUp) {
       switch (material.productType) {
         case ProductType.COMPUESTOS: {
