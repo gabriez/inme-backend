@@ -174,7 +174,19 @@ export interface UpdateUser {
   };
   name: string;
   password: string;
+  updatePassword: boolean;
 }
+
+export interface CreateUserReq
+  extends RequestAPI<{
+    name: string;
+    email: string;
+    username: string;
+    password: string;
+    rol: {
+      id: number;
+    };
+  }> {}
 
 export interface UpdateUserReq extends RequestAPI<UpdateUser, { id: string }> {}
 export interface GetUsersReq

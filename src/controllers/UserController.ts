@@ -1,6 +1,7 @@
 import type { FindManyOptions, FindOptionsWhere } from "typeorm";
 import type { Users } from "@/database/entities/Users";
 import type {
+  CreateUserReq,
   GetUsersReq,
   IdParamReq,
   RequestAPI,
@@ -58,6 +59,7 @@ export const GetUsers = async (req: GetUsersReq, res: ResponseAPI) => {
     const take = Number(limit) || 10;
     const skip = Number(offset) || 0;
 
+    console.log(limit, offset, nombre, rol, username);
     const whereClause: FindOptionsWhere<Users> = {};
 
     if (email && email.length > 0) {
@@ -88,7 +90,7 @@ export const GetUsers = async (req: GetUsersReq, res: ResponseAPI) => {
     };
 
     const [users, total] = await UserRepository.findAndCount(options);
-
+    console.log(users);
     res.status(200).json({
       status: true,
       data: { total, users },
@@ -105,12 +107,106 @@ export const GetUsers = async (req: GetUsersReq, res: ResponseAPI) => {
   }
 };
 
+export const createUser = async (req: CreateUserReq, res: ResponseAPI) => {
+  try {
+    if (!req.body) {
+      res.status(422).json({
+        status: false,
+        message: "No se proporcionaron datos para actualizar",
+      });
+      return;
+    }
+    const { name, email, username, password, rol } = req.body;
+    if (!name || !email || !username || !password) {
+      res.status(422).json({
+        data: null,
+        status: false,
+        message: "Por favor envíe su nombre, email, username y contraseña",
+      });
+      return;
+    }
+    const user = await UserRepository.findOneBy([{ username }, { email }]);
+    if (user) {
+      const message = [];
+      if (user.username === username) {
+        message.push("El usuario ya existe");
+      }
+      if (user.email === email) {
+        message.push("El email ya está en uso");
+      }
+
+      res.status(422).json({
+        data: null,
+        status: false,
+        message,
+      });
+
+      return;
+    }
+    const role = await RolesRepository.findOneBy({ id: rol.id });
+    if (!role) {
+      res.status(422).json({
+        data: null,
+        status: false,
+        message: "El rol no existe",
+      });
+      return;
+    }
+
+    const newUser = UserRepository.create({
+      name,
+      email,
+      username,
+      password,
+      rol: [role],
+    });
+    await UserRepository.save(newUser);
+    res.status(201).json({
+      status: true,
+      data: {
+        name: newUser.name,
+        username: newUser.username,
+        email: newUser.email,
+        rol: newUser.rol,
+        verified: newUser.verified,
+        id: newUser.id,
+      },
+      message: "Usuario creado exitosamente!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      status: false,
+      message:
+        "Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde",
+    });
+  }
+};
+
 export const EditProfile = async (req: UpdateUserReq, res: ResponseAPI) => {
   try {
+    if (!req.body) {
+      res.status(422).json({
+        status: false,
+        message: "No se proporcionaron datos para actualizar",
+      });
+      return;
+    }
     const { id } = req.params;
-    const { name, email, rol, password } = req.body ?? {};
+    const { name, email, rol, password, updatePassword } = req.body;
 
-    const user = await UserRepository.findOneBy({ id: Number(id) });
+    const user = await UserRepository.findOne({
+      where: { id: Number(id) },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        name: true,
+        password: true,
+        verified: true,
+        rol: { id: true, rol: true },
+      },
+    });
     if (!user) {
       res.status(404).json({
         status: false,
@@ -121,7 +217,7 @@ export const EditProfile = async (req: UpdateUserReq, res: ResponseAPI) => {
 
     const userEmail = await UserRepository.findOneBy({ email });
 
-    if (userEmail) {
+    if (userEmail && userEmail.id !== user.id) {
       res.status(422).json({
         data: null,
         status: false,
@@ -129,34 +225,43 @@ export const EditProfile = async (req: UpdateUserReq, res: ResponseAPI) => {
       });
       return;
     }
-
-    if (!password) {
+    const role = await RolesRepository.findOneBy({ id: rol.id });
+    if (!role) {
       res.status(422).json({
+        data: null,
         status: false,
-        message: "La contraseña no puede ser una cadena vacía",
+        message: "El rol no existe",
       });
       return;
     }
-
-    const samePassword = await user.comparePassword(password);
-    let dataToUpdate: unknown = {};
-    dataToUpdate = samePassword
-      ? { name, email, rol: [rol] }
-      : {
-          password,
-          name,
-          email,
-          rol: [rol],
-        };
-
-    Object.assign(user, dataToUpdate);
+    if (updatePassword) {
+      if (!password) {
+        res.status(422).json({
+          status: false,
+          message: "La contraseña no puede ser una cadena vacía",
+        });
+        return;
+      }
+      Object.assign(user, {
+        password,
+        name,
+        email,
+        rol: [rol],
+      });
+    } else {
+      Object.assign(user, {
+        name,
+        email,
+        rol: [rol],
+      });
+    }
 
     await UserRepository.save(user);
 
     res.status(200).json({
       status: true,
       data: { user },
-      message: "Usuario obtenido exitosamente",
+      message: "Usuario editado exitosamente",
     });
   } catch (error) {
     console.log(error);

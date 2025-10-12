@@ -81,6 +81,9 @@ export const signUp = async (req: IsignUpReq, res: ResponseAPI) => {
         name: newUser.name,
         username: newUser.username,
         email: newUser.email,
+        rol: newUser.rol,
+        verified: newUser.verified,
+        id: newUser.id,
       },
       message: "Success!",
     });
