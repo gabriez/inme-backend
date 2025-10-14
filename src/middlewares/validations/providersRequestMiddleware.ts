@@ -11,19 +11,22 @@ const providersSchema = z.object({
   enterpriseName: z
     .string("El nombre de la empresa debe ser una cadena")
     .min(3, "El nombre de la empresa debe tener al menos 3 caracteres")
-    .max(70, "El nombre de la empresa no debe exceder los 100 caracteres"),
+    .max(70, "El nombre de la empresa no debe exceder los 70 caracteres"),
   personContact: z
     .string("El nombre del contacto debe ser una cadena")
     .min(3, "El nombre del contacto debe tener al menos 3 caracteres")
-    .max(70, "El nombre del contacto no debe exceder los 100 caracteres"),
+    .max(70, "El nombre del contacto no debe exceder los 70 caracteres"),
   enterprisePhone: z
     .string("El teléfono de la empresa debe ser una cadena")
     .min(7, "El teléfono de la empresa debe tener al menos 7 caracteres")
     .max(22, "El teléfono de la empresa no debe exceder los 22 caracteres"),
   description: z
     .string("La descripción de la empresa debe ser una cadena")
-    .min(7, "La descripción de la empresa debe tener al menos 20 caracteres")
-    .max(22, "La descripción de la empresa no debe exceder los 400 caracteres"),
+    .min(20, "La descripción de la empresa debe tener al menos 20 caracteres")
+    .max(
+      400,
+      "La descripción de la empresa no debe exceder los 400 caracteres",
+    ),
   email: z
     .email("El email de la empresa no es válido")
     .max(150, "El email de la empresa no debe exceder los 150 caracteres")
