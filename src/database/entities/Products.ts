@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToMany, OneToMany } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany } from "typeorm";
 
 import { CoreEntity } from "./CoreEntity";
 import { MaterialsList } from "./MaterialsList";
@@ -55,10 +55,14 @@ export class Products extends CoreEntity {
 
   @OneToMany(
     () => MaterialsList,
-    (materialsList) => materialsList.idProdComponente,
+    (materialsList) => materialsList.idProdCompuesto,
+    { cascade: ["insert"] },
   )
   public materialsList: MaterialsList[];
 
   @ManyToMany(() => Providers, (providers) => providers.id)
+  @JoinTable({
+    name: "providers_products_products",
+  })
   providers: Providers[];
 }

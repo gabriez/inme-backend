@@ -19,6 +19,42 @@ const ProductsRepository = GlobalRepository.productsRepository;
 const MaterialsListRepository = GlobalRepository.materialsListRepository;
 const HistorialRepository = GlobalRepository.historialRepository;
 
+const getProductWithRelations = async (id: number) => {
+  return ProductsRepository.findOne({
+    where: { id },
+    select: {
+      id: true,
+      codigo: true,
+      nombre: true,
+      productType: true,
+      measureUnit: true,
+      existenciaReservada: true,
+      existencia: true,
+      planos: true,
+      materialsList: {
+        id: true,
+        quantity: true,
+        idProdComponente: {
+          id: true,
+          nombre: true,
+          codigo: true,
+          measureUnit: true,
+        },
+      },
+      providers: {
+        id: true,
+        enterpriseName: true,
+      },
+    },
+    relations: {
+      providers: true,
+      materialsList: {
+        idProdComponente: true,
+      },
+    },
+  });
+};
+
 export const GetProductsController = async (
   req: GetProductsListReq,
   res: ResponseAPI,
@@ -58,6 +94,7 @@ export const GetProductsController = async (
         nombre: true,
         productType: true,
         measureUnit: true,
+        existenciaReservada: true,
         existencia: true,
         planos: true,
         materialsList: {
@@ -75,9 +112,16 @@ export const GetProductsController = async (
           enterpriseName: true,
         },
       },
+      relations: {
+        providers: true,
+        materialsList: {
+          idProdComponente: true,
+        },
+      },
     };
 
     const [products, total] = await ProductsRepository.findAndCount(options);
+    console.log(products);
     res.status(200).json({
       status: true,
       data: { products, total },
@@ -105,7 +149,7 @@ export const CreateProductsController = async (
       planos,
       productType,
       measureUnit,
-      providersList = [],
+      providers = [],
     } = req.body ?? {};
 
     const productByCode = await ProductsRepository.findOneBy({
@@ -118,7 +162,6 @@ export const CreateProductsController = async (
       });
       return;
     }
-
     const product = ProductsRepository.create({
       codigo,
       nombre,
@@ -126,25 +169,28 @@ export const CreateProductsController = async (
       planos,
       productType,
       measureUnit,
-      providers: providersList,
+      existenciaReservada: 0,
+      providers,
     });
 
     await ProductsRepository.save(product);
-    const materialsListCreated: MaterialsList[] = materialsList.map(
+    const materialsListToCreate: MaterialsList[] = materialsList.map(
       (material) => {
         return MaterialsListRepository.create({
           quantity: material.quantity,
-          idProdComponente: { id: material.id },
-          idProdCompuesto: { id: product.id },
+          idProdComponenteId: material.id,
+          idProdCompuestoId: product.id,
         });
       },
     );
 
-    await MaterialsListRepository.save(materialsListCreated);
-    product.materialsList = materialsListCreated;
+    await MaterialsListRepository.save(materialsListToCreate);
+
+    const returnedProduct = await getProductWithRelations(product.id);
+
     res.status(200).json({
       status: true,
-      data: product,
+      data: returnedProduct,
       message: "Producto creado exitosamente",
     });
   } catch (error) {
@@ -202,9 +248,7 @@ export const UpdateProductController = async (
 
     const { id } = req.params;
 
-    const product = await ProductsRepository.findOneBy({
-      id: Number(id),
-    });
+    const product = await getProductWithRelations(Number(id));
     if (!product) {
       res.status(404).json({
         status: false,
@@ -281,15 +325,16 @@ export const UpdateProductController = async (
     await MaterialsListRepository.save(materialToCreate);
     await MaterialsListRepository.save(materialToUpdate);
     product.materialsList = [
+      ...product.materialsList,
       ...materialToCreate,
       ...materialToUpdate,
-      ...product.materialsList,
     ];
+    const productUpdated = await getProductWithRelations(Number(id));
 
     res.status(200).json({
       status: true,
       message: "Producto actualizado exitosamente",
-      data: product,
+      data: productUpdated,
     });
   } catch (error) {
     console.log(error);

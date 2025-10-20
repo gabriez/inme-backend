@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany } from "typeorm";
+import { Column, Entity, ManyToMany } from "typeorm";
 
 import { CoreEntity } from "./CoreEntity";
 import { Products } from "./Products";
@@ -71,6 +71,5 @@ export class Providers extends CoreEntity {
   instagram: string;
 
   @ManyToMany(() => Products)
-  @JoinTable()
   products: Products[];
 }

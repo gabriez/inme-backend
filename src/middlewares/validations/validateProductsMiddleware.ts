@@ -95,7 +95,15 @@ export async function validateProvidersExistence(
   next: NextFunction,
 ) {
   try {
-    const { providersList = [] } = req.body ?? {};
+    const resErr = res.status(422);
+    if (!req.body) {
+      resErr.json({
+        status: false,
+        message: "No se proporcionaron datos en el cuerpo de solicitud",
+      });
+      return;
+    }
+    const { providersList = [] } = req.body;
     const providersListIds = providersList.map((provider) => provider.id);
     const providersListLookedUp = await ProvidersRepository.find({
       where: {
@@ -109,6 +117,8 @@ export async function validateProvidersExistence(
       });
       return;
     }
+    req.body.providers = providersListLookedUp;
+
     next();
   } catch (error) {
     console.log(error);
@@ -134,6 +144,7 @@ export async function validateMaterialsExistence(
         id: In(materialsListIds),
       },
     });
+    console.log(materialsListIds, materialsListLookedUp);
     if (materialsListLookedUp.length !== materialsListIds.length) {
       res.status(400).json({
         status: false,
@@ -162,6 +173,7 @@ export async function validateMaterialsExistence(
     if (req.body) {
       req.body.productType = productType;
     }
+
     next();
   } catch (error) {
     console.log(error);

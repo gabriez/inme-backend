@@ -272,7 +272,6 @@ export const productsRouters = () => {
         verifyToken,
         isUser,
 
-        validateIdMiddleware,
         validateProductFields,
         validateMaterialsExistence,
         validateProvidersExistence,

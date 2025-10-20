@@ -85,6 +85,7 @@ export interface ProductsReq {
   providersList: {
     id: number;
   }[];
+  providers: Providers[];
 }
 
 export interface UpdateProductExistenceI {
