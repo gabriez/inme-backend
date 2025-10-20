@@ -5,6 +5,7 @@ import type {
   CreateUpdateProductsReq,
   GetProductsListReq,
   IdParamReq,
+  RequestAPI,
   ResponseAPI,
   UpdateProductExistenceReq,
 } from "@/typescript/express";
@@ -457,7 +458,7 @@ export const ChargeProductsController = async (
     //TODO: cargar productos en historial
 
     const { quantity, actionEnum, description, provider } = req.body;
-
+    console.log(actionEnum);
     if (
       actionEnum !== HistorialAction.INGRESO &&
       actionEnum !== HistorialAction.VARIOS
@@ -496,4 +497,33 @@ export const ChargeProductsController = async (
       ],
     });
   }
+};
+
+export const GetChargeValidActions = (_req: RequestAPI, res: ResponseAPI) => {
+  // Filtrar las acciones válidas que deseas enviar
+  const validActions = Object.entries(HistorialAction).filter(([key]) =>
+    ["INGRESO", "VARIOS"].includes(key),
+  );
+
+  res.status(200).json({
+    message: "Acciones válidas para cargar productos obtenidas exitosamente",
+    status: true,
+    data: validActions,
+  });
+};
+
+export const GetDischargeValidActions = (
+  _req: RequestAPI,
+  res: ResponseAPI,
+) => {
+  // Filtrar las acciones válidas que deseas enviar
+  const validActions = Object.entries(HistorialAction).filter(([key]) =>
+    ["EGRESO", "VENTA", "VARIOS"].includes(key),
+  );
+
+  res.status(200).json({
+    message: "Acciones válidas para descargar productos obtenidas exitosamente",
+    status: true,
+    data: validActions,
+  });
 };

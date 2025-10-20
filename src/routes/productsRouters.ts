@@ -4,6 +4,8 @@ import {
   ChargeProductsController,
   CreateProductsController,
   DischargeProductsController,
+  GetChargeValidActions,
+  GetDischargeValidActions,
   GetProductByIdController,
   GetProductsController,
   UpdateProductController,
@@ -425,6 +427,8 @@ export const productsRouters = () => {
    *             schema:
    *               $ref: '#/components/schemas/ErrorUnexpectedSchema'
    */
+  router.get("/charge/actions", verifyToken, GetChargeValidActions);
+
   router.post(
     "/charge/:id",
     [
@@ -590,6 +594,7 @@ export const productsRouters = () => {
    *             schema:
    *               $ref: '#/components/schemas/ErrorUnexpectedSchema'
    */
+  router.get("/discharge/actions", verifyToken, GetDischargeValidActions);
   router.post(
     "/discharge/:id",
     [

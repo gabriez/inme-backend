@@ -144,7 +144,6 @@ export async function validateMaterialsExistence(
         id: In(materialsListIds),
       },
     });
-    console.log(materialsListIds, materialsListLookedUp);
     if (materialsListLookedUp.length !== materialsListIds.length) {
       res.status(400).json({
         status: false,
@@ -252,7 +251,7 @@ export async function validateProdExistenceChangeMiddleware(
       });
     }
 
-    const validActions = Object.values(HistorialAction);
+    const validActions = Object.keys(HistorialAction);
     if (!validActions.includes(action as HistorialAction)) {
       resErr.json({
         status: false,

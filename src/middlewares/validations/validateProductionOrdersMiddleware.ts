@@ -107,7 +107,7 @@ export function validateOrderState(
     });
   }
 
-  const validOrders = Object.values(OrderState);
+  const validOrders = Object.keys(OrderState);
   if (!validOrders.includes(orderState as OrderState)) {
     resErr.json({
       status: false,
