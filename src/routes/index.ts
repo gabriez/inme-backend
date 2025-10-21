@@ -9,6 +9,7 @@ import { historialRouters } from "./historialRouters";
 import { productionOrderRoutes } from "./productionOrderRouters";
 import { productsRouters } from "./productsRouters";
 import { providersRouters } from "./providersRouters";
+import { statisticsRouters } from "./statisticsRouters";
 import { swaggerDocs } from "./swagger";
 import { userRouters } from "./userRouters";
 
@@ -95,5 +96,6 @@ export const routes = (app: Express): Express => {
     router.use("/products", productsRouters()),
     router.use("/production-order", productionOrderRoutes()),
     router.use("/history", historialRouters()),
+    router.use("/statistics", statisticsRouters()),
   );
 };

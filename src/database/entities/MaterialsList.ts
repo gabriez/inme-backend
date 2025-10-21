@@ -25,7 +25,7 @@ export class MaterialsList extends CoreEntity {
   })
   public idProdComponenteId: number;
 
-  @ManyToOne(() => Products, (products) => products.id, { lazy: true })
+  @ManyToOne(() => Products, (products) => products.id)
   @JoinColumn({ name: "idProdComponenteId" })
-  public idProdComponente: Partial<Products>;
+  public componentProduct: Products;
 }

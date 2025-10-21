@@ -139,7 +139,7 @@ export const productsRouters = () => {
    *                     materialsList:
    *                       - id: 1
    *                         quantity: 3
-   *                         idProdComponente:
+   *                         componentProduct:
    *                           id: 2
    *                           nombre: "Acero inoxidable"
    *                           codigo: "MAT-001"
@@ -198,7 +198,7 @@ export const productsRouters = () => {
    *                 materialsList:
    *                   - id: 1
    *                     quantity: 3
-   *                     idProdComponente:
+   *                     componentProduct:
    *                       id: 2
    *                     idProdCompuesto:
    *                       id: 1
@@ -711,7 +711,7 @@ export const productsRouters = () => {
    *                 materialsList:
    *                   - id: 1
    *                     quantity: 5
-   *                     idProdComponente:
+   *                     componentProduct:
    *                       id: 3
    *                     idProdCompuesto:
    *                       id: 1
