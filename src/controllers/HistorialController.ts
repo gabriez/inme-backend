@@ -2,7 +2,13 @@ import type { FindManyOptions, FindOptionsWhere } from "typeorm";
 import type { Historial } from "@/database/entities/Historial";
 import type { GetHistorialReq, ResponseAPI } from "@/typescript/express";
 
-import { Equal, Like } from "typeorm";
+import {
+  Between,
+  Equal,
+  LessThanOrEqual,
+  Like,
+  MoreThanOrEqual,
+} from "typeorm";
 
 import { HistorialAction } from "@/database/entities/Historial";
 import { GlobalRepository } from "@/database/repositories/globalRepository";
@@ -11,7 +17,17 @@ const HistorialRepository = GlobalRepository.historialRepository;
 
 export const GetHistory = async (req: GetHistorialReq, res: ResponseAPI) => {
   try {
-    const { limit, offset, product, action } = req.query;
+    const {
+      limit,
+      offset,
+      product,
+      action,
+      productId,
+      providerId,
+      clientId,
+      startDate,
+      endDate,
+    } = req.query;
 
     const take = Number(limit) || 10;
     const skip = Number(offset) || 0;
@@ -21,9 +37,30 @@ export const GetHistory = async (req: GetHistorialReq, res: ResponseAPI) => {
     if (product && product.length > 0) {
       whereClause.product = { nombre: Like(`%${product}%`) };
     }
-    // TODO: implementar filtro por fecha
+
+    if (productId) {
+      whereClause.product = { id: Equal(Number(productId)) };
+    }
+
+    if (providerId) {
+      whereClause.provider = { id: Equal(Number(providerId)) };
+    }
+
+    if (clientId) {
+      whereClause.client = { id: Equal(Number(clientId)) };
+    }
+
+    // Date range filter
+    if (startDate && endDate) {
+      whereClause.create_at = Between(new Date(startDate), new Date(endDate));
+    } else if (startDate) {
+      whereClause.create_at = MoreThanOrEqual(new Date(startDate));
+    } else if (endDate) {
+      whereClause.create_at = LessThanOrEqual(new Date(endDate));
+    }
+
     if (action && action.length > 0) {
-      const validActions = Object.values(HistorialAction);
+      const validActions = Object.keys(HistorialAction);
       if (!validActions.includes(action as HistorialAction)) {
         res.status(422).json({
           status: false,
