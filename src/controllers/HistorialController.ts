@@ -64,6 +64,7 @@ export const GetHistory = async (req: GetHistorialReq, res: ResponseAPI) => {
           ciRif: true,
         },
         productionOrder: { id: true },
+        create_at: true,
       },
       relations: {
         client: true,
