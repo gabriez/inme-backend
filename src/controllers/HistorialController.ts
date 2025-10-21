@@ -50,17 +50,26 @@ export const GetHistory = async (req: GetHistorialReq, res: ResponseAPI) => {
         client: {
           id: true,
           nombreEmpresa: true,
+          ciRif: true,
         },
         product: {
           id: true,
           nombre: true,
+          codigo: true,
         },
         description: true,
         provider: {
           id: true,
           enterpriseName: true,
+          ciRif: true,
         },
         productionOrder: { id: true },
+      },
+      relations: {
+        client: true,
+        product: true,
+        provider: true,
+        productionOrder: true,
       },
     };
 

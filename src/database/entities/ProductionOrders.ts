@@ -26,6 +26,7 @@ export class ProductionOrders extends CoreEntity {
 
   @Column({
     type: "date",
+    nullable: true,
   })
   startDate: Date;
 
@@ -36,6 +37,7 @@ export class ProductionOrders extends CoreEntity {
 
   @Column({
     type: "date",
+    nullable: true,
   })
   realEndDate: Date;
 

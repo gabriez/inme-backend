@@ -14,47 +14,12 @@ import { Like } from "typeorm";
 
 import { HistorialAction } from "@/database/entities/Historial";
 import { ProductType } from "@/database/entities/Products";
+import { getProductWithRelations } from "@/database/helpers/productsHelpers";
 import { GlobalRepository } from "@/database/repositories/globalRepository";
 
 const ProductsRepository = GlobalRepository.productsRepository;
 const MaterialsListRepository = GlobalRepository.materialsListRepository;
 const HistorialRepository = GlobalRepository.historialRepository;
-
-const getProductWithRelations = async (id: number) => {
-  return ProductsRepository.findOne({
-    where: { id },
-    select: {
-      id: true,
-      codigo: true,
-      nombre: true,
-      productType: true,
-      measureUnit: true,
-      existenciaReservada: true,
-      existencia: true,
-      planos: true,
-      materialsList: {
-        id: true,
-        quantity: true,
-        idProdComponente: {
-          id: true,
-          nombre: true,
-          codigo: true,
-          measureUnit: true,
-        },
-      },
-      providers: {
-        id: true,
-        enterpriseName: true,
-      },
-    },
-    relations: {
-      providers: true,
-      materialsList: {
-        idProdComponente: true,
-      },
-    },
-  });
-};
 
 export const GetProductsController = async (
   req: GetProductsListReq,

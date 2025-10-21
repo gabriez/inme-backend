@@ -13,6 +13,7 @@ import { Equal, In, Like } from "typeorm";
 
 import { HistorialAction } from "@/database/entities/Historial";
 import { OrderState } from "@/database/entities/ProductionOrders";
+import { getProductWithRelations } from "@/database/helpers/productsHelpers";
 import { GlobalRepository } from "@/database/repositories/globalRepository";
 
 const ProductsRepository = GlobalRepository.productsRepository;
@@ -248,19 +249,23 @@ export const GetProductionOrdersController = async (
     const options: FindManyOptions<ProductionOrders> = {
       take,
       skip,
-      where: whereClause,
-      order: {
-        create_at: "DESC",
-      },
       select: {
         id: true,
-        product: { nombre: true, id: true },
+        product: { nombre: true, id: true, codigo: true, measureUnit: true },
         cantidadProductoFabricado: true,
         orderState: true,
         startDate: true,
         endDate: true,
         realEndDate: true,
         responsables: true,
+        create_at: true,
+      },
+      relations: {
+        product: true,
+      },
+      where: whereClause,
+      order: {
+        create_at: "desc",
       },
     };
 
@@ -299,9 +304,7 @@ export const CreateProductionOrderController = async (
     const { cantidadProductoFabricado, endDate, product, responsables } =
       req.body;
 
-    const productEntity = await ProductsRepository.findOneBy({
-      id: Number(product.id),
-    });
+    const productEntity = await getProductWithRelations(Number(product.id));
 
     if (!productEntity) {
       res.status(404).json({
@@ -314,7 +317,7 @@ export const CreateProductionOrderController = async (
     const materialsChanges = [];
 
     const materialsListIds = productEntity.materialsList.map(
-      (item) => item.idProdComponente.id,
+      (item) => item.idProdComponenteId,
     );
 
     const materialsList = await ProductsRepository.find({
@@ -334,7 +337,7 @@ export const CreateProductionOrderController = async (
 
     for (const material of productEntity.materialsList) {
       const product = materialsList.find(
-        (item) => item.id == material.idProdComponente.id,
+        (item) => item.id == material.idProdComponenteId,
       );
 
       if (!product) {
@@ -350,8 +353,7 @@ export const CreateProductionOrderController = async (
       if (newExistenciaReservada > product.existencia) {
         res.status(400).json({
           status: false,
-          message:
-            "Todos los materiales existentes ya han sido ocupados. Carga más materiales o cancela una orden en cola.",
+          message: `El material ${product.codigo} - ${product.nombre} no tiene suficiente existencia disponible para crear ${productEntity.codigo} - ${productEntity.nombre}.`,
         });
         return;
       }
@@ -371,6 +373,7 @@ export const CreateProductionOrderController = async (
       ProductsRepository.save(materialsChanges),
       ProductionOrdersRepository.save(productionOrder),
     ]);
+    productionOrder.product = productEntity;
 
     res.status(201).json({
       status: true,
