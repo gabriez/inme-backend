@@ -41,7 +41,7 @@ const processProductionOrderCompletion = async (
   const historialChanges = [];
 
   const materialsListIds = productionOrder.product.materialsList.map(
-    (item) => item.idProdComponente.id,
+    (item) => item.idProdComponenteId,
   );
 
   const materialsList = await ProductsRepository.find({
@@ -61,7 +61,7 @@ const processProductionOrderCompletion = async (
 
   for (const material of productionOrder.product.materialsList) {
     const product = materialsList.find(
-      (item) => item.id == material.idProdComponente.id,
+      (item) => item.id == material.idProdComponenteId,
     );
 
     if (!product) {
@@ -75,11 +75,14 @@ const processProductionOrderCompletion = async (
     const totalMaterialQuantity =
       material.quantity * productionOrder.cantidadProductoFabricado;
 
-    if (product.existenciaReservada < totalMaterialQuantity) {
+    if (
+      product.existenciaReservada + totalMaterialQuantity >
+      product.existencia
+    ) {
       return {
         success: false,
         status: 400,
-        message: `No se puede reducir la existencia del producto ${product.codigo} reservada a menos de cero. Hay un error en el historial`,
+        message: `No se puede aumentar la existencia reservada del producto ${product.codigo} - ${product.nombre} a un valor mayor que la existencia total. Revisa el intentario y las ordenes en producción`,
       };
     }
 
@@ -87,7 +90,7 @@ const processProductionOrderCompletion = async (
       return {
         success: false,
         status: 400,
-        message: `No se puede reducir la existencia del producto ${product.codigo} a menos de cero. Hay un error en el historial`,
+        message: `No se puede reducir la existencia del producto ${product.codigo} - ${product.nombre} a menos de cero. Revisa el inventario`,
       };
     }
 
@@ -103,13 +106,7 @@ const processProductionOrderCompletion = async (
       description: `Gasto por orden de producción número ${productionOrder.id}`,
     });
 
-    const productionOrderStory = HistorialRepository.create({
-      action: HistorialAction.ORDENPRODUCCION,
-      description: `Orden de producción número ${productionOrder.id} culminada`,
-      productionOrder: productionOrder,
-    });
-
-    historialChanges.push(story, productionOrderStory);
+    historialChanges.push(story);
     materialsChanges.push(product);
   }
 
@@ -137,7 +134,14 @@ const processProductionOrderCompletion = async (
     description: `Ingreso por orden de producción ${productionOrder.id}`,
   });
 
-  historialChanges.push(story);
+  const productionOrderStory = HistorialRepository.create({
+    action: HistorialAction.ORDENPRODUCCION,
+    description: `Orden de producción número ${productionOrder.id} culminada`,
+    productionOrder: productionOrder,
+    cantidad: 0,
+  });
+
+  historialChanges.push(story, productionOrderStory);
   materialsChanges.push(product);
 
   return {
@@ -164,7 +168,7 @@ const processProductionOrderCancel = async (
 > => {
   const revertChanges = [];
   const materialsListIds = productionOrder.product.materialsList.map(
-    (item) => item.idProdComponente.id,
+    (item) => item.idProdComponenteId,
   );
 
   const materialsList = await ProductsRepository.find({
@@ -184,7 +188,7 @@ const processProductionOrderCancel = async (
 
   for (const material of productionOrder.product.materialsList) {
     const product = materialsList.find(
-      (item) => item.id == material.idProdComponente.id,
+      (item) => item.id == material.idProdComponenteId,
     );
     if (!product) {
       return {
@@ -407,8 +411,15 @@ export const UpdateProductionOrderController = async (
 
     const { id } = req.params;
 
-    const productionOrder = await ProductionOrdersRepository.findOneBy({
-      id: Number(id),
+    const productionOrder = await ProductionOrdersRepository.findOne({
+      where: { id: Number(id) },
+      relations: {
+        product: {
+          materialsList: {
+            idProdComponente: true,
+          },
+        },
+      },
     });
 
     if (!productionOrder) {
@@ -535,12 +546,27 @@ export const ChangeProductionOrderStatusController = async (
     const productionOrder = await ProductionOrdersRepository.findOne({
       where: { id: Number(id) },
       select: {
+        id: true,
         endDate: true,
         orderState: true,
         cantidadProductoFabricado: true,
         product: {
           id: true,
-          materialsList: { idProdComponente: true, quantity: true },
+          codigo: true,
+          nombre: true,
+          measureUnit: true,
+          materialsList: {
+            idProdComponenteId: true,
+            idProdComponente: true,
+            quantity: true,
+          },
+        },
+      },
+      relations: {
+        product: {
+          materialsList: {
+            idProdComponente: true,
+          },
         },
       },
     });
@@ -620,6 +646,13 @@ export const ChangeProductionOrderStatusController = async (
         databaseQueries.push(...result.queries);
         productionOrder.realEndDate = new Date();
         break;
+      }
+      default: {
+        res.status(400).json({
+          status: false,
+          message: "Hay un error en el estado de la orden proporcionado",
+        });
+        return;
       }
     }
 

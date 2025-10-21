@@ -7,6 +7,7 @@ import type {
 
 import z from "zod";
 
+import { HistorialAction } from "@/database/entities/Historial";
 import { OrderState } from "@/database/entities/ProductionOrders";
 
 const isAfterToday = (d: Date) => {
@@ -106,8 +107,10 @@ export function validateOrderState(
         "No se envió el estado de orden correspondiente. Valores válidos: EnProceso, Ejecutada, Cancelada, PorIniciar",
     });
   }
-
   const validOrders = Object.keys(OrderState);
+  console.log(orderState, validOrders, OrderState);
+  console.log(HistorialAction);
+
   if (!validOrders.includes(orderState as OrderState)) {
     resErr.json({
       status: false,
@@ -116,6 +119,7 @@ export function validateOrderState(
     return;
   }
   const orderStateEnum = OrderState[orderState as keyof typeof OrderState];
+  console.log(orderStateEnum);
   req.body.orderStateEnum = orderStateEnum;
   next();
 }
