@@ -416,7 +416,7 @@ export const UpdateProductionOrderController = async (
       relations: {
         product: {
           materialsList: {
-            idProdComponente: true,
+            componentProduct: true,
           },
         },
       },
@@ -445,7 +445,7 @@ export const UpdateProductionOrderController = async (
       cantidadProductoFabricado != productionOrder.cantidadProductoFabricado
     ) {
       const materialsListIds = productionOrder.product.materialsList.map(
-        (item) => item.idProdComponente.id,
+        (item) => item.componentProduct.id,
       );
 
       const materialsList = await ProductsRepository.find({
@@ -465,7 +465,7 @@ export const UpdateProductionOrderController = async (
 
       for (const material of productionOrder.product.materialsList) {
         const product = materialsList.find(
-          (item) => item.id == material.idProdComponente.id,
+          (item) => item.id == material.componentProduct.id,
         );
         if (!product) {
           res.status(404).json({
@@ -557,7 +557,7 @@ export const ChangeProductionOrderStatusController = async (
           measureUnit: true,
           materialsList: {
             idProdComponenteId: true,
-            idProdComponente: true,
+            componentProduct: true,
             quantity: true,
           },
         },
@@ -565,7 +565,7 @@ export const ChangeProductionOrderStatusController = async (
       relations: {
         product: {
           materialsList: {
-            idProdComponente: true,
+            componentProduct: true,
           },
         },
       },

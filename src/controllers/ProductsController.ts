@@ -66,7 +66,7 @@ export const GetProductsController = async (
         materialsList: {
           id: true,
           quantity: true,
-          idProdComponente: {
+          componentProduct: {
             id: true,
             nombre: true,
             codigo: true,
@@ -81,7 +81,7 @@ export const GetProductsController = async (
       relations: {
         providers: true,
         materialsList: {
-          idProdComponente: true,
+          componentProduct: true,
         },
       },
     };
@@ -261,7 +261,7 @@ export const UpdateProductController = async (
       let materialExists = false;
 
       for (const material of product.materialsList) {
-        if (material.idProdComponente.id === materialBody.id) {
+        if (material.componentProduct.id === materialBody.id) {
           if (material.quantity !== materialBody.quantity) {
             Object.assign(material, materialBody);
             materialToUpdate.push(material);
@@ -274,7 +274,7 @@ export const UpdateProductController = async (
       if (!materialExists) {
         const materialCreated = MaterialsListRepository.create({
           idProdCompuesto: { id: Number(id) },
-          idProdComponente: { id: materialBody.id },
+          componentProduct: { id: materialBody.id },
           quantity: materialBody.quantity,
         });
         materialToCreate.push(materialCreated);
@@ -283,7 +283,7 @@ export const UpdateProductController = async (
 
     const materialToDelete: MaterialsList[] = [];
     for (const material of product.materialsList) {
-      if (!materialsList.some((m) => m.id === material.idProdComponente.id)) {
+      if (!materialsList.some((m) => m.id === material.componentProduct.id)) {
         materialToDelete.push(material);
       }
     }

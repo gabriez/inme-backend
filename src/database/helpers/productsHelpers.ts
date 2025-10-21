@@ -18,7 +18,7 @@ export const getProductWithRelations = async (id: number) => {
         id: true,
         idProdComponenteId: true,
         quantity: true,
-        idProdComponente: {
+        componentProduct: {
           id: true,
           nombre: true,
           codigo: true,
@@ -33,7 +33,7 @@ export const getProductWithRelations = async (id: number) => {
     relations: {
       providers: true,
       materialsList: {
-        idProdComponente: true,
+        componentProduct: true,
       },
     },
   });
