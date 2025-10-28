@@ -5,8 +5,8 @@ import type { GetHistorialReq, ResponseAPI } from "@/typescript/express";
 import {
   Between,
   Equal,
+  ILike,
   LessThanOrEqual,
-  Like,
   MoreThanOrEqual,
 } from "typeorm";
 
@@ -35,7 +35,7 @@ export const GetHistory = async (req: GetHistorialReq, res: ResponseAPI) => {
     const whereClause: FindOptionsWhere<Historial> = {};
 
     if (product && product.length > 0) {
-      whereClause.product = { nombre: Like(`%${product}%`) };
+      whereClause.product = { nombre: ILike(`%${product}%`) };
     }
 
     if (productId) {

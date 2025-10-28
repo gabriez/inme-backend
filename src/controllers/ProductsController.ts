@@ -10,7 +10,7 @@ import type {
   UpdateProductExistenceReq,
 } from "@/typescript/express";
 
-import { Like } from "typeorm";
+import { ILike } from "typeorm";
 
 import { HistorialAction } from "@/database/entities/Historial";
 import { ProductType } from "@/database/entities/Products";
@@ -26,7 +26,7 @@ export const GetProductsController = async (
   res: ResponseAPI,
 ) => {
   try {
-    const { limit, offset, codigo, nombre, productType } = req.query;
+    const { limit, offset, codigo, nombre, productType, provider } = req.query;
 
     const take = Number(limit) || 10;
     const skip = Number(offset) || 0;
@@ -34,10 +34,10 @@ export const GetProductsController = async (
     const whereClause: FindOptionsWhere<Products> = {};
 
     if (codigo && codigo.length > 0) {
-      whereClause.codigo = Like(`%${codigo}%`);
+      whereClause.codigo = ILike(`%${codigo}%`);
     }
     if (nombre && nombre.length > 0) {
-      whereClause.nombre = Like(`%${nombre}%`);
+      whereClause.nombre = ILike(`%${nombre}%`);
     }
     if (productType && productType.length > 0) {
       const validProductTypes = Object.values(ProductType);
@@ -48,6 +48,11 @@ export const GetProductsController = async (
         });
       }
       whereClause.productType = productType as ProductType;
+    }
+    if (provider && typeof provider === "string" && provider.length > 0) {
+      whereClause.providers = {
+        enterpriseName: ILike(`%${provider}%`),
+      };
     }
 
     const options: FindManyOptions<Products> = {

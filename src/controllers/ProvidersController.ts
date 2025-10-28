@@ -1,4 +1,4 @@
-import type { FindManyOptions } from "typeorm";
+import type { FindManyOptions, FindOptionsWhere } from "typeorm";
 import type { Providers } from "@/database/entities/Providers";
 import type {
   CreateUpdateProvidersReq,
@@ -7,7 +7,7 @@ import type {
   ResponseAPI,
 } from "@/typescript/express";
 
-import { Like } from "typeorm";
+import { ILike } from "typeorm";
 
 import { GlobalRepository } from "@/database/repositories/globalRepository";
 
@@ -18,17 +18,38 @@ export const getProvidersController = async (
   res: ResponseAPI,
 ) => {
   try {
-    const { limit, enterpriseName = "", offset } = req.query;
+    const {
+      limit,
+      offset,
+      enterpriseName = "",
+      email = "",
+      personContact = "",
+      ciRif = "",
+    } = req.query;
     const take = Number(limit) || 10;
     const skip = Number(offset) || 0;
+
+    const whereClause: FindOptionsWhere<Providers> = {};
+
+    // Aplicar filtros si existen
+    if (typeof enterpriseName === "string" && enterpriseName.length > 0) {
+      whereClause.enterpriseName = ILike(`%${enterpriseName}%`);
+    }
+    if (typeof email === "string" && email.length > 0) {
+      whereClause.email = ILike(`%${email}%`);
+    }
+    if (typeof personContact === "string" && personContact.length > 0) {
+      whereClause.personContact = ILike(`%${personContact}%`);
+    }
+    if (typeof ciRif === "string" && ciRif.length > 0) {
+      whereClause.ciRif = ILike(`%${ciRif}%`);
+    }
 
     const options: FindManyOptions<Providers> = {
       take,
       skip,
+      where: whereClause,
     };
-    if (enterpriseName.length > 0) {
-      options.where = { enterpriseName: Like(`%${enterpriseName}%`) };
-    }
 
     const providers = await ProvidersRepository.find(options);
     const total = await ProvidersRepository.count(options);

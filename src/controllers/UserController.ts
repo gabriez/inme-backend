@@ -9,7 +9,7 @@ import type {
   UpdateUserReq,
 } from "../typescript/express";
 
-import { Like } from "typeorm";
+import { ILike } from "typeorm";
 
 import { GlobalRepository } from "@/database/repositories/globalRepository";
 
@@ -63,13 +63,13 @@ export const GetUsers = async (req: GetUsersReq, res: ResponseAPI) => {
     const whereClause: FindOptionsWhere<Users> = {};
 
     if (email && email.length > 0) {
-      whereClause.email = Like(`%${email}%`);
+      whereClause.email = ILike(`%${email}%`);
     }
     if (nombre && nombre.length > 0) {
-      whereClause.name = Like(`%${nombre}%`);
+      whereClause.name = ILike(`%${nombre}%`);
     }
     if (username && username.length > 0) {
-      whereClause.username = Like(`%${username}%`);
+      whereClause.username = ILike(`%${username}%`);
     }
     if (rol && Number(rol)) {
       whereClause.rol = { id: Number(rol) };

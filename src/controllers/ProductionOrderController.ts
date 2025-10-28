@@ -1,4 +1,3 @@
-import type { FindManyOptions, FindOptionsWhere } from "typeorm";
 import type { Historial } from "@/database/entities/Historial";
 import type { ProductionOrders } from "@/database/entities/ProductionOrders";
 import type { Products } from "@/database/entities/Products";
@@ -9,7 +8,7 @@ import type {
   ResponseAPI,
 } from "@/typescript/express";
 
-import { Equal, In, Like } from "typeorm";
+import { In } from "typeorm";
 
 import { HistorialAction } from "@/database/entities/Historial";
 import { OrderState } from "@/database/entities/ProductionOrders";
@@ -220,26 +219,65 @@ export const GetProductionOrdersController = async (
       realEndDate,
       startDate,
       orderState,
+      responsables,
     } = req.query;
 
     const take = Number(limit) || 10;
     const skip = Number(offset) || 0;
 
-    const whereClause: FindOptionsWhere<ProductionOrders> = {};
+    // Usar QueryBuilder para búsqueda avanzada
+    let query = ProductionOrdersRepository.createQueryBuilder("order")
+      .leftJoinAndSelect("order.product", "product")
+      .select([
+        "order.id",
+        "order.cantidadProductoFabricado",
+        "order.orderState",
+        "order.startDate",
+        "order.endDate",
+        "order.realEndDate",
+        "order.responsables",
+        "order.create_at",
+        "product.id",
+        "product.codigo",
+        "product.nombre",
+        "product.measureUnit",
+      ])
+      .take(take)
+      .skip(skip)
+      .orderBy("order.create_at", "DESC");
 
-    if (product && product.length > 0) {
-      whereClause.product = { nombre: Like(`%${product}%`) };
+    // Aplicar filtros
+    if (product && typeof product === "string" && product.length > 0) {
+      // Buscar en código, nombre o concatenación "CODIGO - NOMBRE" (case-insensitive)
+      query = query.andWhere(
+        "(LOWER(product.codigo) LIKE LOWER(:product) OR LOWER(product.nombre) LIKE LOWER(:product) OR LOWER(CONCAT(product.codigo, ' - ', product.nombre)) LIKE LOWER(:product))",
+        { product: `%${product}%` },
+      );
     }
-    if (endDate && endDate.length > 0) {
-      whereClause.endDate = Equal(new Date(endDate));
+
+    if (endDate && typeof endDate === "string" && endDate.length > 0) {
+      query = query.andWhere("DATE(order.endDate) = DATE(:endDate)", {
+        endDate: endDate,
+      });
     }
-    if (realEndDate && realEndDate.length > 0) {
-      whereClause.realEndDate = Equal(new Date(realEndDate));
+
+    if (
+      realEndDate &&
+      typeof realEndDate === "string" &&
+      realEndDate.length > 0
+    ) {
+      query = query.andWhere("DATE(order.realEndDate) = DATE(:realEndDate)", {
+        realEndDate: realEndDate,
+      });
     }
-    if (startDate && startDate.length > 0) {
-      whereClause.startDate = Equal(new Date(startDate));
+
+    if (startDate && typeof startDate === "string" && startDate.length > 0) {
+      query = query.andWhere("DATE(order.startDate) = DATE(:startDate)", {
+        startDate: startDate,
+      });
     }
-    if (orderState && orderState.length > 0) {
+
+    if (orderState && typeof orderState === "string" && orderState.length > 0) {
       const validOrderStates = Object.values(OrderState);
       if (!validOrderStates.includes(orderState as OrderState)) {
         return res.status(400).json({
@@ -247,34 +285,23 @@ export const GetProductionOrdersController = async (
           message: `orderState inválido. Los valores válidos son: ${validOrderStates.join(", ")}`,
         });
       }
-      whereClause.orderState = orderState as OrderState;
+      query = query.andWhere("order.orderState = :orderState", { orderState });
     }
 
-    const options: FindManyOptions<ProductionOrders> = {
-      take,
-      skip,
-      select: {
-        id: true,
-        product: { nombre: true, id: true, codigo: true, measureUnit: true },
-        cantidadProductoFabricado: true,
-        orderState: true,
-        startDate: true,
-        endDate: true,
-        realEndDate: true,
-        responsables: true,
-        create_at: true,
-      },
-      relations: {
-        product: true,
-      },
-      where: whereClause,
-      order: {
-        create_at: "desc",
-      },
-    };
+    if (
+      responsables &&
+      typeof responsables === "string" &&
+      responsables.length > 0
+    ) {
+      query = query.andWhere(
+        "LOWER(order.responsables) LIKE LOWER(:responsables)",
+        {
+          responsables: `%${responsables}%`,
+        },
+      );
+    }
 
-    const [productionOrders, total] =
-      await ProductionOrdersRepository.findAndCount(options);
+    const [productionOrders, total] = await query.getManyAndCount();
     res.status(200).json({
       status: true,
       data: { productionOrders, total },

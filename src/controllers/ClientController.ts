@@ -1,4 +1,4 @@
-import type { FindManyOptions } from "typeorm";
+import type { FindManyOptions, FindOptionsWhere } from "typeorm";
 import type { Client } from "@/database/entities/Client";
 import type {
   CreateUpdateClientReq,
@@ -7,7 +7,7 @@ import type {
   ResponseAPI,
 } from "@/typescript/express";
 
-import { Like } from "typeorm";
+import { ILike } from "typeorm";
 
 import { GlobalRepository } from "@/database/repositories/globalRepository";
 
@@ -64,17 +64,57 @@ export const createClient = async (
 
 export const getClients = async (req: GetClientsListReq, res: ResponseAPI) => {
   try {
-    const { limit, nombreEmpresa = "", offset } = req.query;
+    const {
+      limit,
+      nombreEmpresa,
+      emailEmpresa,
+      nombreContacto,
+      emailContacto,
+      ciRif,
+      offset,
+    } = req.query;
     const take = Number(limit) || 10;
     const skip = Number(offset) || 0;
+
+    const whereClause: FindOptionsWhere<Client> = {};
+
+    if (
+      nombreEmpresa &&
+      typeof nombreEmpresa === "string" &&
+      nombreEmpresa.length > 0
+    ) {
+      whereClause.nombreEmpresa = ILike(`%${nombreEmpresa}%`);
+    }
+    if (
+      emailEmpresa &&
+      typeof emailEmpresa === "string" &&
+      emailEmpresa.length > 0
+    ) {
+      whereClause.emailEmpresa = ILike(`%${emailEmpresa}%`);
+    }
+    if (
+      nombreContacto &&
+      typeof nombreContacto === "string" &&
+      nombreContacto.length > 0
+    ) {
+      whereClause.nombreContacto = ILike(`%${nombreContacto}%`);
+    }
+    if (
+      emailContacto &&
+      typeof emailContacto === "string" &&
+      emailContacto.length > 0
+    ) {
+      whereClause.emailContacto = ILike(`%${emailContacto}%`);
+    }
+    if (ciRif && typeof ciRif === "string" && ciRif.length > 0) {
+      whereClause.ciRif = ILike(`%${ciRif}%`);
+    }
 
     const options: FindManyOptions<Client> = {
       take,
       skip,
+      where: whereClause,
     };
-    if (nombreEmpresa.length > 0) {
-      options.where = { nombreEmpresa: Like(`%${nombreEmpresa}%`) };
-    }
 
     const clients = await ClientRepository.find(options);
     const total = await ClientRepository.count(options);
