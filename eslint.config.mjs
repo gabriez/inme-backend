@@ -37,6 +37,8 @@ const config = [
       ".yarn",
       "tsconfig.json",
       "ecosystem.config.js",
+      "coverage/**",
+      "**/*.js",
     ],
   },
   // Configuración global personalizada

@@ -10,7 +10,7 @@ import type {
   UpdateProductExistenceReq,
 } from "@/typescript/express";
 
-import { ILike } from "typeorm";
+import { Like } from "typeorm";
 
 import { HistorialAction } from "@/database/entities/Historial";
 import { ProductType } from "@/database/entities/Products";
@@ -26,7 +26,7 @@ export const GetProductsController = async (
   res: ResponseAPI,
 ) => {
   try {
-    const { limit, offset, codigo, nombre, productType, provider } = req.query;
+    const { limit, offset, codigo, nombre, productType } = req.query;
 
     const take = Number(limit) || 10;
     const skip = Number(offset) || 0;
@@ -34,10 +34,10 @@ export const GetProductsController = async (
     const whereClause: FindOptionsWhere<Products> = {};
 
     if (codigo && codigo.length > 0) {
-      whereClause.codigo = ILike(`%${codigo}%`);
+      whereClause.codigo = Like(`%${codigo}%`);
     }
     if (nombre && nombre.length > 0) {
-      whereClause.nombre = ILike(`%${nombre}%`);
+      whereClause.nombre = Like(`%${nombre}%`);
     }
     if (productType && productType.length > 0) {
       const validProductTypes = Object.values(ProductType);
@@ -48,11 +48,6 @@ export const GetProductsController = async (
         });
       }
       whereClause.productType = productType as ProductType;
-    }
-    if (provider && typeof provider === "string" && provider.length > 0) {
-      whereClause.providers = {
-        enterpriseName: ILike(`%${provider}%`),
-      };
     }
 
     const options: FindManyOptions<Products> = {
@@ -115,7 +110,7 @@ export const CreateProductsController = async (
   try {
     const {
       codigo,
-      materialsList = [],
+      materialsListParsed = [],
       nombre,
       planos,
       productType,
@@ -145,7 +140,7 @@ export const CreateProductsController = async (
     });
 
     await ProductsRepository.save(product);
-    const materialsListToCreate: MaterialsList[] = materialsList.map(
+    const materialsListToCreate: MaterialsList[] = materialsListParsed.map(
       (material) => {
         return MaterialsListRepository.create({
           quantity: material.quantity,
@@ -230,12 +225,12 @@ export const UpdateProductController = async (
 
     const {
       codigo,
-      materialsList = [],
+      materialsListParsed = [],
       nombre,
       planos,
       productType,
       measureUnit,
-      providersList = [],
+      providersListParsed = [],
     } = req.body;
 
     const productByCode = await ProductsRepository.findOneBy({
@@ -255,14 +250,14 @@ export const UpdateProductController = async (
       planos,
       productType,
       measureUnit,
-      providers: providersList,
+      providers: providersListParsed,
     });
 
     await ProductsRepository.save(product);
 
     const materialToCreate: MaterialsList[] = [];
     const materialToUpdate: MaterialsList[] = [];
-    for (const materialBody of materialsList) {
+    for (const materialBody of materialsListParsed) {
       let materialExists = false;
 
       for (const material of product.materialsList) {
@@ -278,8 +273,8 @@ export const UpdateProductController = async (
 
       if (!materialExists) {
         const materialCreated = MaterialsListRepository.create({
-          idProdCompuesto: { id: Number(id) },
-          componentProduct: { id: materialBody.id },
+          idProdCompuestoId: Number(id),
+          idProdComponenteId: materialBody.id,
           quantity: materialBody.quantity,
         });
         materialToCreate.push(materialCreated);
@@ -288,7 +283,9 @@ export const UpdateProductController = async (
 
     const materialToDelete: MaterialsList[] = [];
     for (const material of product.materialsList) {
-      if (!materialsList.some((m) => m.id === material.componentProduct.id)) {
+      if (
+        !materialsListParsed.some((m) => m.id === material.componentProduct.id)
+      ) {
         materialToDelete.push(material);
       }
     }

@@ -5,6 +5,7 @@ import { Router } from "express";
 // Routes
 import { authRoutes } from "./authRouters";
 import { clientRouters } from "./clientRouters";
+import { databaseRouters } from "./databaseRouters";
 import { historialRouters } from "./historialRouters";
 import { productionOrderRoutes } from "./productionOrderRouters";
 import { productsRouters } from "./productsRouters";
@@ -97,5 +98,6 @@ export const routes = (app: Express): Express => {
     router.use("/production-order", productionOrderRoutes()),
     router.use("/history", historialRouters()),
     router.use("/statistics", statisticsRouters()),
+    router.use("/database", databaseRouters()),
   );
 };

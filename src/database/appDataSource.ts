@@ -7,6 +7,8 @@ import { FixRelationsAndEnums1759643221781 } from "./migrations/1759643221781-fi
 import { FixEnumHistorial1759643952609 } from "./migrations/1759643952609-fix-enum-historial";
 import { AddVerifiedField1759704235151 } from "./migrations/1759704235151-add-verified-field";
 import { NullDatesOrders1761006962234 } from "./migrations/1761006962234-nullDatesOrders";
+import { ProductImages1761781443756 } from "./migrations/1761781443756-product-images";
+import { FixMigrationImage1761782358505 } from "./migrations/1761782358505-fix-migration-image";
 
 const AppDataSource = new DataSource({
   ...dataSourceOptionsCommon,
@@ -17,6 +19,8 @@ const AppDataSource = new DataSource({
     FixEnumHistorial1759643952609,
     AddVerifiedField1759704235151,
     NullDatesOrders1761006962234,
+    ProductImages1761781443756,
+    FixMigrationImage1761782358505,
   ],
 });
 

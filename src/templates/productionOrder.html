@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Orden de Producción #{{id}} - INME</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        color: #333;
+        line-height: 1.6;
+        padding: 40px;
+        background: #fff;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding-bottom: 30px;
+        padding-top: 20px;
+        border-bottom: 3px solid #1260ef;
+        position: relative;
+      }
+
+      .svg-container {
+        background: #000;
+        padding: 10px;
+        border-radius: 8px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .header-info {
+        margin: auto;
+      }
+
+      .header h1 {
+        color: #1260ef;
+        font-size: 28px;
+        margin-bottom: 10px;
+      }
+
+      .header .subtitle {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 5px;
+      }
+
+      .header .date {
+        color: #999;
+        font-size: 12px;
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 14px;
+        margin-top: 10px;
+      }
+
+      .status-badge.en-proceso {
+        background: linear-gradient(135deg, #ffa726 0%, #fb8c00 100%);
+        color: white;
+      }
+
+      .status-badge.ejecutada {
+        background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
+        color: white;
+      }
+
+      .status-badge.cancelada {
+        background: linear-gradient(135deg, #ef5350 0%, #e53935 100%);
+        color: white;
+      }
+
+      .status-badge.por-iniciar {
+        background: linear-gradient(135deg, #42a5f5 0%, #1e88e5 100%);
+        color: white;
+      }
+
+      .content-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+      }
+
+      .section {
+        background: #f8f9fa;
+        padding: 25px;
+        border-radius: 10px;
+        border-left: 4px solid #1260ef;
+        margin-bottom: 30px;
+      }
+
+      .section.full-width {
+        grid-column: 1 / -1;
+      }
+
+      .section-title {
+        color: #1260ef;
+        font-size: 18px;
+        margin-bottom: 15px;
+        font-weight: bold;
+      }
+
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .info-row:last-child {
+        border-bottom: none;
+      }
+
+      .info-label {
+        font-weight: bold;
+        color: #666;
+      }
+
+      .info-value {
+        color: #333;
+        text-align: right;
+      }
+
+      .product-card {
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        display: flex;
+        gap: 25px;
+        align-items: flex-start;
+      }
+
+      .product-image {
+        flex-shrink: 0;
+        width: 200px;
+        height: 200px;
+        border-radius: 8px;
+        overflow: hidden;
+        background: #f5f5f5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #e0e0e0;
+      }
+
+      .product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .product-image.no-image {
+        color: #999;
+        font-size: 14px;
+        text-align: center;
+      }
+
+      .product-details {
+        flex: 1;
+      }
+
+      .product-name {
+        font-size: 22px;
+        color: #1260ef;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .product-code {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+
+      .quantity-box {
+        background: linear-gradient(135deg, #57d7f5 0%, #1260ef 100%);
+        color: white;
+        padding: 5px;
+        border-radius: 8px;
+        margin-top: 15px;
+      }
+
+      .quantity-box p {
+        margin-left: 10px;
+        font-size: 16px;
+      }
+
+      .quantity-box .number {
+        font-size: 22px;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .quantity-box .label {
+        font-size: 14px;
+        opacity: 0.9;
+      }
+
+      .footer {
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 2px solid #eee;
+        text-align: center;
+        color: #999;
+        font-size: 12px;
+      }
+
+      @media print {
+        body {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <div class="svg-container">
+        <svg
+          width="130"
+          height="130"
+          viewBox="0 0 130 130"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M71.8302 35.32L72.0552 36.29H71.0752L71.8302 35.32Z"
+            fill="#ffffff"
+          />
+          <path
+            d="M110.065 71.015H80.0852L77.2552 58.8L101.805 36.29H71.0752L94.7102 4.67L110.065 71.015Z"
+            fill="#ffffff"
+          />
+          <path
+            d="M90.5751 40.65L80.9451 49.48L76.1251 53.905L61.7551 67.075L26.6901 98.96L46.1851 67.075L50.2351 60.45L53.0101 55.905H19.9351L23.4751 51.15L61.6251 0H92.6751L62.1051 40.65H90.5751Z"
+            fill="#57D7F5"
+          />
+          <path
+            d="M4.25 108.315H11.415L7.165 129.515H0L4.25 108.315Z"
+            fill="#ffffff"
+          />
+          <path
+            d="M35.8151 108.315L31.5651 129.515H25.6751L19.5751 119.64L17.6001 129.515H10.6201L14.8701 108.315H20.7601L26.8601 118.19L28.8351 108.315H35.8151Z"
+            fill="#ffffff"
+          />
+          <path
+            d="M64.7099 108.315L60.5199 129.515H53.9949L55.8749 119.855L49.8949 127.61H46.7399L43.4599 119.98L41.5499 129.52H35.0249L39.2749 108.32H45.1049L49.7199 119.585L58.6149 108.32H64.7149L64.7099 108.315Z"
+            fill="#ffffff"
+          />
+          <path
+            d="M74.1799 113.705L73.6949 116.19H82.6799L81.6499 121.34H72.6349L72.0899 124.125H82.7449L81.6499 129.515H63.9849L68.2349 108.315H85.5049L84.4099 113.705H74.1799Z"
+            fill="#ffffff"
+          />
+          <path
+            d="M90.7702 128.805C89.1202 128.01 87.8452 126.89 86.9452 125.46C86.0452 124.025 85.5952 122.38 85.5952 120.525C85.5952 118.06 86.1652 115.87 87.3102 113.955C88.4552 112.035 90.0402 110.54 92.0752 109.46C94.1102 108.38 96.4202 107.84 99.0102 107.84C101.055 107.84 102.865 108.21 104.445 108.945C106.025 109.68 107.195 110.725 107.965 112.08L102.805 116.11C101.855 114.455 100.44 113.625 98.5552 113.625C97.4402 113.625 96.4502 113.895 95.5802 114.445C94.7102 114.99 94.0302 115.75 93.5452 116.73C93.0602 117.71 92.8152 118.825 92.8152 120.075C92.8152 121.325 93.2152 122.33 94.0152 123.09C94.8152 123.845 95.8702 124.225 97.1852 124.225C98.9852 124.225 100.565 123.405 101.92 121.77L106.14 125.8C104.905 127.315 103.505 128.395 101.935 129.04C100.365 129.685 98.5502 130.01 96.4852 130.01C94.3202 130.01 92.4152 129.61 90.7652 128.815L90.7702 128.805Z"
+            fill="#ffffff"
+          />
+          <path
+            d="M122.17 125.82H114.065L111.94 129.515H104.38L117.92 108.315H124.96L130 129.515H122.865L122.165 125.82H122.17ZM121.165 120.675L120.135 115.255L117.01 120.675H121.17H121.165Z"
+            fill="#ffffff"
+          />
+        </svg>
+      </div>
+      <div class="header-info">
+        <h1>Orden de Producción #{{id}}</h1>
+        <p class="subtitle">Sistema de Gestión INME</p>
+        <p class="date">Generado el {{currentDate}}</p>
+        <div class="status-badge {{orderStateClass}}">{{orderState}}</div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="section">
+        <h2 class="section-title">Fechas de Producción</h2>
+        <div class="info-row">
+          <span class="info-label">Fecha de Inicio:</span>
+          <span class="info-value">{{startDate}}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Fecha Estimada de Fin:</span>
+          <span class="info-value">{{endDate}}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Fecha Real de Fin:</span>
+          <span class="info-value">{{realEndDate}}</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">Responsables</h2>
+        <div class="info-row">
+          <span class="info-value" style="width: 100%">{{responsables}}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section full-width">
+      <h2 class="section-title">Información del Producto</h2>
+      <div class="product-card">
+        {{#hasProductImage}}
+        <div class="product-image">
+          <img src="{{productImageBase64}}" alt="{{productName}}" />
+        </div>
+        {{/hasProductImage}} {{^hasProductImage}}
+        <div class="product-image no-image">
+          <div>Sin imagen<br />disponible</div>
+        </div>
+        {{/hasProductImage}}
+        <div class="product-details">
+          <div class="product-name">{{productName}}</div>
+          <div class="product-code">Código: {{productCode}}</div>
+          <div class="quantity-box">
+            <p>
+              Cantidad fabricada: <span class="number">{{quantity}}</span>
+              <span class="label">{{unit}}</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section full-width">
+      <h2 class="section-title">Lista de materiales</h2>
+      {{#materialsList}}
+      <div class="product-card">
+        <div class="product-details">
+          <div class="product-name">{{componentProduct.nombre}}</div>
+          <div class="product-code">Código: {{componentProduct.codigo}}</div>
+          <div class="quantity-box">
+            <p>
+              Cantidad usada: <span class="number">{{quantity}}</span>
+              <span class="label">{{unit}}</span>
+            </p>
+          </div>
+        </div>
+      </div>
+      {{/materialsList}}
+    </div>
+
+    <div class="footer">
+      <p>INME - Sistema de Gestión de Producción</p>
+      <p>Este documento fue generado automáticamente</p>
+    </div>
+  </body>
+</html>

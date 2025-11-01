@@ -1,6 +1,8 @@
 import type { NextFunction } from "express";
 import type {
   CreateUpdateProductsReq,
+  MaterialsListProductsI,
+  ProvidersListProductsI,
   ResponseAPI,
   UpdateProductExistenceReq,
 } from "@/typescript/express";
@@ -50,19 +52,53 @@ export function validateProductFields(
     return;
   }
   try {
-    const {
-      codigo,
-      materialsList,
-      providersList,
-      measureUnit,
-      planos,
-      nombre,
-    } = req.body;
+    // Parse JSON strings from multipart/form-data
+    const materialsList = req.body.materialsList;
+    const providersList = req.body.providersList;
+
+    let materialsListParsed: MaterialsListProductsI[] = [];
+    let providersListParsed: ProvidersListProductsI[] = [];
+
+    if (typeof materialsList === "string") {
+      try {
+        materialsListParsed = JSON.parse(
+          materialsList,
+        ) as MaterialsListProductsI[];
+      } catch (error) {
+        console.log("Error in validateProductFields>", error);
+        resErr.json({
+          status: false,
+          message:
+            "Ocurrió un error obteniendo la información de la lista de materiales",
+        });
+      }
+    }
+
+    if (typeof providersList === "string") {
+      try {
+        providersListParsed = JSON.parse(
+          providersList,
+        ) as ProvidersListProductsI[];
+      } catch (error) {
+        console.log("Error in validateProductFields>", error);
+        resErr.json({
+          status: false,
+          message:
+            "Ocurrió un error obteniendo la información de la lista de proveedores",
+        });
+      }
+    }
+
+    // Update req.body with parsed values
+    req.body.materialsListParsed = materialsListParsed;
+    req.body.providersListParsed = providersListParsed;
+
+    const { codigo, measureUnit, planos, nombre } = req.body;
 
     const parse = validateProductsSchema.safeParse({
       codigo,
-      materialsList,
-      providersList,
+      materialsList: req.body.materialsList,
+      providersList: req.body.providersList,
       measureUnit,
       planos,
       nombre,
@@ -103,8 +139,8 @@ export async function validateProvidersExistence(
       });
       return;
     }
-    const { providersList = [] } = req.body;
-    const providersListIds = providersList.map((provider) => provider.id);
+    const { providersListParsed = [] } = req.body;
+    const providersListIds = providersListParsed.map((provider) => provider.id);
     const providersListLookedUp = await ProvidersRepository.find({
       where: {
         id: In(providersListIds),
@@ -137,8 +173,8 @@ export async function validateMaterialsExistence(
   next: NextFunction,
 ) {
   try {
-    const { materialsList = [] } = req.body ?? {};
-    const materialsListIds = materialsList.map((material) => material.id);
+    const { materialsListParsed = [] } = req.body ?? {};
+    const materialsListIds = materialsListParsed.map((material) => material.id);
     const materialsListLookedUp = await ProductsRepository.find({
       where: {
         id: In(materialsListIds),

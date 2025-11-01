@@ -5,7 +5,7 @@ import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 
-import { PORT_APP } from "./constants";
+import { PORT_APP, ROOT_DIRECTORY } from "./constants";
 import { routes } from "./routes";
 
 // initializations
@@ -20,6 +20,11 @@ app.use(helmet());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Serve static files from ROOT_DIRECTORY
+if (ROOT_DIRECTORY) {
+  app.use("/uploads", express.static(ROOT_DIRECTORY));
+}
 
 // routes
 routes(app);

@@ -1,6 +1,9 @@
 import { Router } from "express";
 
-import { GetStatistics } from "@/controllers/StatisticsController";
+import {
+  GenerateReportPDF,
+  GetStatistics,
+} from "@/controllers/StatisticsController";
 import { verifyToken } from "@/middlewares/authJWT";
 
 /**
@@ -107,6 +110,38 @@ export const statisticsRouters = (): Router => {
    *               $ref: '#/components/schemas/ErrorUnexpectedSchema'
    */
   routerRoot.get("/", [verifyToken], GetStatistics);
+
+  /**
+   * @swagger
+   * /api/v1.0/statistics/report/pdf:
+   *   get:
+   *     summary: Generar reporte PDF con estadísticas
+   *     description: Genera un reporte PDF con productos más vendidos, órdenes completadas y insumos más usados
+   *     security:
+   *       - BearerAuth: []
+   *     tags: [Estadísticas]
+   *     responses:
+   *       200:
+   *         description: PDF generado exitosamente
+   *         content:
+   *           application/pdf:
+   *             schema:
+   *               type: string
+   *               format: binary
+   *       401:
+   *         description: Unauthorized
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/ErrorValidationToken'
+   *       500:
+   *         description: Error al generar el reporte
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/ErrorUnexpectedSchema'
+   */
+  routerRoot.get("/report/pdf", [verifyToken], GenerateReportPDF);
 
   return routerRoot;
 };

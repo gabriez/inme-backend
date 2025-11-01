@@ -10,6 +10,12 @@ export enum ProductType {
   COMPUESTOS = "compuestos",
 }
 
+export interface ImageProducts {
+  uri: string;
+  width: number;
+  height: number;
+}
+
 @Entity()
 export class Products extends CoreEntity {
   @Column({
@@ -46,6 +52,12 @@ export class Products extends CoreEntity {
     length: 500,
   })
   planos: string;
+
+  @Column({
+    type: "json",
+    nullable: true,
+  })
+  imageUri: ImageProducts;
 
   @Column({
     type: "enum",

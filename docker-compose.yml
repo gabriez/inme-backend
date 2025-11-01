@@ -10,6 +10,7 @@ services:
       - "4555:5432"
     volumes:
       - db:/data/postgres
+
   api:
     build: .
     restart: always
@@ -23,12 +24,26 @@ services:
       DB_NAME: inme
       PORT: 3030
       DB_SSL: false
+      ROOT_DIRECTORY: /home/tmp/inme
     depends_on:
       - db
     links:
       - db
     volumes:
       - ./:/app
+      - uploads_data:/home/tmp/inme
+
+  nginx:
+    image: nginx:alpine
+    restart: always
+    ports:
+      - "8082:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - uploads_data:/home/tmp/inme:ro
+    depends_on:
+      - api
 
 volumes:
   db:
+  uploads_data:

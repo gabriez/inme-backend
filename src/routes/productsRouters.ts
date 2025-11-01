@@ -11,6 +11,7 @@ import {
   UpdateProductController,
 } from "@/controllers/ProductsController";
 import { isUser, verifyToken } from "@/middlewares/authJWT";
+import { storeProductImages } from "@/middlewares/multerMiddleware";
 import { validateIdMiddleware } from "@/middlewares/validations/generalValidationMiddlewares";
 import {
   validateMaterialsExistence,
@@ -270,14 +271,12 @@ export const productsRouters = () => {
     .route("/")
     .get(verifyToken, GetProductsController)
     .post(
-      [
-        verifyToken,
-        isUser,
-
-        validateProductFields,
-        validateMaterialsExistence,
-        validateProvidersExistence,
-      ],
+      verifyToken,
+      isUser,
+      storeProductImages,
+      validateProductFields,
+      validateMaterialsExistence,
+      validateProvidersExistence,
       CreateProductsController,
     );
 
@@ -810,14 +809,13 @@ export const productsRouters = () => {
     .route("/:id")
     .get(verifyToken, GetProductByIdController)
     .put(
-      [
-        verifyToken,
-        isUser,
-        validateIdMiddleware,
-        validateProductFields,
-        validateMaterialsExistence,
-        validateProvidersExistence,
-      ],
+      verifyToken,
+      isUser,
+      validateIdMiddleware,
+      storeProductImages,
+      validateProductFields,
+      validateMaterialsExistence,
+      validateProvidersExistence,
       UpdateProductController,
     );
   return router;

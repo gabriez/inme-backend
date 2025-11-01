@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reporte de Estadísticas - INME</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        color: #333;
+        line-height: 1.6;
+        padding: 40px;
+        background: #fff;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding-bottom: 40px;
+        padding-top: 20px;
+        border-bottom: 3px solid #1260ef;
+        position: relative;
+      }
+
+      .header-info {
+        margin: auto;
+      }
+
+      .header h1 {
+        color: #1260ef;
+        font-size: 32px;
+        margin-bottom: 10px;
+      }
+
+      .header .subtitle {
+        color: #666;
+        font-size: 14px;
+      }
+
+      .header .date {
+        color: #999;
+        font-size: 12px;
+        margin-top: 10px;
+      }
+
+      .svg-container {
+        background: #000;
+        padding: 10px;
+        border-radius: 8px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .section {
+        margin-bottom: 40px;
+        page-break-inside: avoid;
+      }
+
+      .section-title {
+        color: #1260ef;
+        font-size: 20px;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #57d7f5;
+      }
+
+      .summary-box {
+        background: linear-gradient(135deg, #57d7f5 0%, #1260ef 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .summary-box h2 {
+        font-size: 48px;
+        margin-bottom: 5px;
+      }
+
+      .summary-box p {
+        font-size: 16px;
+        opacity: 0.9;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      thead {
+        background: linear-gradient(90deg, #57d7f5 0%, #1260ef 100%);
+        color: white;
+      }
+
+      th {
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #eee;
+      }
+
+      tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      tbody tr:hover {
+        background-color: #f0f8ff;
+      }
+
+      .rank {
+        background: #1260ef;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 14px;
+      }
+
+      .rank.gold {
+        background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+      }
+
+      .rank.silver {
+        background: linear-gradient(135deg, #c0c0c0 0%, #a9a9a9 100%);
+      }
+
+      .rank.bronze {
+        background: linear-gradient(135deg, #cd7f32 0%, #8b4513 100%);
+      }
+
+      .chart-container {
+        margin: 20px 0;
+        padding: 20px;
+        background: #f9f9f9;
+        border-radius: 8px;
+      }
+
+      .bar-chart {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .bar-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .bar-label {
+        min-width: 60px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #666;
+      }
+
+      .bar-container {
+        flex: 1;
+        height: 30px;
+        background: #e0e0e0;
+        border-radius: 4px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #57d7f5 0%, #1260ef 100%);
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 10px;
+        color: white;
+        font-weight: bold;
+        font-size: 12px;
+        transition: width 0.3s ease;
+      }
+
+      .footer {
+        margin-top: 60px;
+        padding-top: 20px;
+        border-top: 2px solid #eee;
+        text-align: center;
+        color: #999;
+        font-size: 12px;
+      }
+
+      .no-data {
+        text-align: center;
+        padding: 40px;
+        color: #999;
+        font-style: italic;
+      }
+
+      @media print {
+        body {
+          padding: 20px;
+        }
+
+        .section {
+          page-break-inside: avoid;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <div class="svg-container">
+        <svg
+          width="130"
+          height="130"
+          viewBox="0 0 130 130"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M71.8302 35.32L72.0552 36.29H71.0752L71.8302 35.32Z"
+            fill="#ffffff"
+          />
+          <path
+            d="M110.065 71.015H80.0852L77.2552 58.8L101.805 36.29H71.0752L94.7102 4.67L110.065 71.015Z"
+            fill="#ffffff"
+          />
+          <path
+            d="M90.5751 40.65L80.9451 49.48L76.1251 53.905L61.7551 67.075L26.6901 98.96L46.1851 67.075L50.2351 60.45L53.0101 55.905H19.9351L23.4751 51.15L61.6251 0H92.6751L62.1051 40.65H90.5751Z"
+            fill="#57D7F5"
+          />
+          <path
+            d="M4.25 108.315H11.415L7.165 129.515H0L4.25 108.315Z"
+            fill="#ffffff"
+          />
+          <path
+            d="M35.8151 108.315L31.5651 129.515H25.6751L19.5751 119.64L17.6001 129.515H10.6201L14.8701 108.315H20.7601L26.8601 118.19L28.8351 108.315H35.8151Z"
+            fill="#ffffff"
+          />
+          <path
+            d="M64.7099 108.315L60.5199 129.515H53.9949L55.8749 119.855L49.8949 127.61H46.7399L43.4599 119.98L41.5499 129.52H35.0249L39.2749 108.32H45.1049L49.7199 119.585L58.6149 108.32H64.7149L64.7099 108.315Z"
+            fill="#ffffff"
+          />
+          <path
+            d="M74.1799 113.705L73.6949 116.19H82.6799L81.6499 121.34H72.6349L72.0899 124.125H82.7449L81.6499 129.515H63.9849L68.2349 108.315H85.5049L84.4099 113.705H74.1799Z"
+            fill="#ffffff"
+          />
+          <path
+            d="M90.7702 128.805C89.1202 128.01 87.8452 126.89 86.9452 125.46C86.0452 124.025 85.5952 122.38 85.5952 120.525C85.5952 118.06 86.1652 115.87 87.3102 113.955C88.4552 112.035 90.0402 110.54 92.0752 109.46C94.1102 108.38 96.4202 107.84 99.0102 107.84C101.055 107.84 102.865 108.21 104.445 108.945C106.025 109.68 107.195 110.725 107.965 112.08L102.805 116.11C101.855 114.455 100.44 113.625 98.5552 113.625C97.4402 113.625 96.4502 113.895 95.5802 114.445C94.7102 114.99 94.0302 115.75 93.5452 116.73C93.0602 117.71 92.8152 118.825 92.8152 120.075C92.8152 121.325 93.2152 122.33 94.0152 123.09C94.8152 123.845 95.8702 124.225 97.1852 124.225C98.9852 124.225 100.565 123.405 101.92 121.77L106.14 125.8C104.905 127.315 103.505 128.395 101.935 129.04C100.365 129.685 98.5502 130.01 96.4852 130.01C94.3202 130.01 92.4152 129.61 90.7652 128.815L90.7702 128.805Z"
+            fill="#ffffff"
+          />
+          <path
+            d="M122.17 125.82H114.065L111.94 129.515H104.38L117.92 108.315H124.96L130 129.515H122.865L122.165 125.82H122.17ZM121.165 120.675L120.135 115.255L117.01 120.675H121.17H121.165Z"
+            fill="#ffffff"
+          />
+        </svg>
+      </div>
+      <div class="header-info">
+        <h1>Reporte de Estadísticas</h1>
+        <p class="subtitle">Sistema de Gestión INME</p>
+        <p class="date">Generado el {{generatedDate}}</p>
+      </div>
+    </div>
+
+    <!-- Resumen de Órdenes Completadas -->
+    <div class="section">
+      <div class="summary-box">
+        <h2>{{totalCompletedOrders}}</h2>
+        <p>Órdenes de Producción Completadas en {{currentYear}}</p>
+      </div>
+    </div>
+
+    <!-- Gráfico de Órdenes por Mes -->
+    <div class="section">
+      <h2 class="section-title">
+        📊 Órdenes Completadas por Mes ({{currentYear}})
+      </h2>
+      {{#hasMonthlyData}}
+      <div class="chart-container">
+        <div class="bar-chart">
+          {{#monthlyOrders}}
+          <div class="bar-item">
+            <span class="bar-label">{{month}}</span>
+            <div class="bar-container">
+              <div class="bar-fill" style="width: {{percentage}}%">
+                {{value}}
+              </div>
+            </div>
+          </div>
+          {{/monthlyOrders}}
+        </div>
+      </div>
+      {{/hasMonthlyData}} {{^hasMonthlyData}}
+      <div class="no-data">No hay datos de órdenes completadas este año</div>
+      {{/hasMonthlyData}}
+    </div>
+
+    <!-- Productos Más Vendidos -->
+    <div class="section">
+      <h2 class="section-title">🏆 Productos Más Vendidos</h2>
+      {{#hasSalesData}}
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 80px">Posición</th>
+            <th>Producto</th>
+            <th style="width: 150px; text-align: right">Cantidad Vendida</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#topSalesProducts}}
+          <tr>
+            <td>
+              <span class="rank {{rankClass}}">{{rank}}</span>
+            </td>
+            <td>{{nombre}}</td>
+            <td style="text-align: right; font-weight: 600">
+              {{productos}} unidades
+            </td>
+          </tr>
+          {{/topSalesProducts}}
+        </tbody>
+      </table>
+      {{/hasSalesData}} {{^hasSalesData}}
+      <div class="no-data">No hay datos de ventas registradas</div>
+      {{/hasSalesData}}
+    </div>
+
+    <!-- Insumos Más Usados -->
+    <div class="section">
+      <h2 class="section-title">🔧 Insumos Más Utilizados</h2>
+      {{#hasUsageData}}
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 80px">Posición</th>
+            <th>Insumo</th>
+            <th style="width: 150px; text-align: right">Cantidad Usada</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#mostUsedProducts}}
+          <tr>
+            <td>
+              <span class="rank {{rankClass}}">{{rank}}</span>
+            </td>
+            <td>{{codigo}} - {{nombre}}</td>
+            <td style="text-align: right; font-weight: 600">
+              {{productos}} unidades
+            </td>
+          </tr>
+          {{/mostUsedProducts}}
+        </tbody>
+      </table>
+      {{/hasUsageData}} {{^hasUsageData}}
+      <div class="no-data">No hay datos de uso de insumos</div>
+      {{/hasUsageData}}
+    </div>
+
+    <div class="footer">
+      <p>
+        Este reporte fue generado automáticamente por el Sistema de Gestión INME
+      </p>
+      <p>© {{currentYear}} INME - Todos los derechos reservados</p>
+    </div>
+  </body>
+</html>

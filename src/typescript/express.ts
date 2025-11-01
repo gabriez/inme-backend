@@ -71,6 +71,15 @@ export interface GetProvidersListReq
 
 // Products req
 
+export interface MaterialsListProductsI {
+  id: number;
+  quantity: number;
+}
+
+export interface ProvidersListProductsI {
+  id: number;
+}
+
 export interface ProductsReq {
   codigo: string;
   nombre: string;
@@ -78,13 +87,10 @@ export interface ProductsReq {
   measureUnit: string;
   planos: string;
   productType: ProductType;
-  materialsList: {
-    id: number;
-    quantity: number;
-  }[];
-  providersList: {
-    id: number;
-  }[];
+  materialsList: string;
+  providersList: string;
+  providersListParsed: ProvidersListProductsI[];
+  materialsListParsed: MaterialsListProductsI[];
   providers: Providers[];
 }
 
@@ -95,6 +101,8 @@ export interface UpdateProductExistenceI {
   actionEnum: HistorialAction;
   provider?: { id: number };
   client?: { id: number };
+  imageWidth?: number;
+  imageHeight?: number;
 }
 
 export interface CreateUpdateProductsReq
@@ -203,3 +211,17 @@ export interface GetUsersReq
       nombre: string;
     }
   > {}
+
+// Database
+export interface ExportDatabaseReq
+  extends RequestAPI<{
+    username: string;
+    password: string;
+  }> {}
+
+export interface ImportDatabaseReq
+  extends RequestAPI<{
+    username: string;
+    password: string;
+    sqlContent: string;
+  }> {}

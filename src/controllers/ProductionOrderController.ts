@@ -5,9 +5,15 @@ import type {
   ChangeOrderStateReq,
   CreateUpdateProductsOrdersReq,
   GetProductsOrdersListReq,
+  IdParamReq,
   ResponseAPI,
 } from "@/typescript/express";
 
+import { readFile } from "node:fs/promises";
+import nodePath from "node:path";
+
+import mustache from "mustache";
+import puppeteer from "puppeteer";
 import { In } from "typeorm";
 
 import { HistorialAction } from "@/database/entities/Historial";
@@ -73,17 +79,6 @@ const processProductionOrderCompletion = async (
 
     const totalMaterialQuantity =
       material.quantity * productionOrder.cantidadProductoFabricado;
-
-    if (
-      product.existenciaReservada + totalMaterialQuantity >
-      product.existencia
-    ) {
-      return {
-        success: false,
-        status: 400,
-        message: `No se puede aumentar la existencia reservada del producto ${product.codigo} - ${product.nombre} a un valor mayor que la existencia total. Revisa el intentario y las ordenes en producción`,
-      };
-    }
 
     if (product.existencia < totalMaterialQuantity) {
       return {
@@ -228,6 +223,8 @@ export const GetProductionOrdersController = async (
     // Usar QueryBuilder para búsqueda avanzada
     let query = ProductionOrdersRepository.createQueryBuilder("order")
       .leftJoinAndSelect("order.product", "product")
+      .leftJoinAndSelect("product.materialsList", "materialsList")
+      .leftJoinAndSelect("materialsList.componentProduct", "componentProduct")
       .select([
         "order.id",
         "order.cantidadProductoFabricado",
@@ -241,6 +238,12 @@ export const GetProductionOrdersController = async (
         "product.codigo",
         "product.nombre",
         "product.measureUnit",
+        "materialsList.id",
+        "materialsList.quantity",
+        "componentProduct.id",
+        "componentProduct.codigo",
+        "componentProduct.nombre",
+        "componentProduct.measureUnit",
       ])
       .take(take)
       .skip(skip)
@@ -576,6 +579,8 @@ export const ChangeProductionOrderStatusController = async (
         id: true,
         endDate: true,
         orderState: true,
+        realEndDate: true,
+        startDate: true,
         cantidadProductoFabricado: true,
         product: {
           id: true,
@@ -692,6 +697,147 @@ export const ChangeProductionOrderStatusController = async (
       data: productionOrder,
       message: "Orden de producción actualizada exitosamente",
     });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      status: false,
+      message: [
+        "Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde",
+      ],
+    });
+  }
+};
+
+export const GetProductionOrderReport = async (
+  req: IdParamReq,
+  res: ResponseAPI,
+) => {
+  try {
+    const { id } = req.params;
+    const productionOrder = await ProductionOrdersRepository.findOne({
+      where: { id: Number(id) },
+      relations: {
+        product: {
+          materialsList: {
+            componentProduct: true,
+          },
+        },
+      },
+    });
+    if (!productionOrder) {
+      res.status(404).json({
+        status: false,
+        message: "Orden de producción no encontrada",
+      });
+      return;
+    }
+
+    // Convert product image to base64 if exists
+    let productImageBase64 = "";
+    if (productionOrder.product.imageUri.uri) {
+      try {
+        const imagePath = nodePath.join(
+          process.env.ROOT_DIRECTORY ?? "/home/tmp/inme",
+          productionOrder.product.imageUri.uri,
+        );
+        const imageBuffer = await readFile(imagePath);
+        const imageExt = productionOrder.product.imageUri.uri
+          .split(".")
+          .pop()
+          ?.toLowerCase();
+        let mimeType = "image/png";
+        if (imageExt === "png") {
+          mimeType = "image/png";
+        } else if (imageExt === "jpg" || imageExt === "jpeg") {
+          mimeType = "image/jpeg";
+        }
+        productImageBase64 = `data:${mimeType};base64,${imageBuffer.toString("base64")}`;
+      } catch (error) {
+        console.log("Error loading product image:", error);
+      }
+    }
+
+    const materialsList = productionOrder.product.materialsList.map((item) => ({
+      componentProduct: item.componentProduct,
+      quantity: item.quantity * productionOrder.cantidadProductoFabricado,
+    }));
+
+    // Normalize order state for CSS class
+
+    const orderStateClass = productionOrder.orderState
+      .toLowerCase()
+      .normalize("NFD")
+      .replaceAll(/[\u0300-\u036F]/g, "")
+
+      .replaceAll(/\s+/g, "-");
+
+    // Prepare template data
+    const templateData = {
+      id: productionOrder.id,
+      orderState: productionOrder.orderState,
+
+      orderStateClass,
+      startDate: productionOrder.startDate
+        ? new Date(productionOrder.startDate).toLocaleDateString("es-ES")
+        : "No iniciada",
+      endDate: new Date(productionOrder.endDate).toLocaleDateString("es-ES"),
+      realEndDate: productionOrder.realEndDate
+        ? new Date(productionOrder.realEndDate).toLocaleDateString("es-ES")
+        : "Pendiente",
+      responsables: productionOrder.responsables,
+      productName: productionOrder.product.nombre || "N/A",
+      productCode: productionOrder.product.codigo || "N/A",
+      quantity: productionOrder.cantidadProductoFabricado,
+      unit: productionOrder.product.measureUnit || "unidades",
+      materialsList,
+      productImageBase64,
+      hasProductImage: !!productImageBase64,
+      currentDate: new Date().toLocaleDateString("es-ES", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }),
+    };
+
+    // Read and render template
+    const templatePath = nodePath.join(
+      process.cwd(),
+      "src",
+      "templates",
+      "productionOrder.html",
+    );
+    const template = await readFile(templatePath, "utf8");
+    const html = mustache.render(template, templateData);
+
+    // Generate PDF with Puppeteer
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
+
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: "domcontentloaded" });
+
+    const pdfBuffer = await page.pdf({
+      format: "A4",
+      printBackground: true,
+      margin: {
+        top: "20px",
+        right: "20px",
+        bottom: "20px",
+        left: "20px",
+      },
+    });
+
+    await browser.close();
+
+    // Send PDF as download
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=orden_produccion_${id}.pdf`,
+    );
+    res.send(pdfBuffer);
   } catch (error) {
     console.log(error);
     res.status(500).json({

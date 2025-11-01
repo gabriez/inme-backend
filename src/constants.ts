@@ -13,4 +13,9 @@ export const DB = {
   ssl: process.env.DB_SSL === "true",
 };
 
+export const ROOT_DIRECTORY = process.env.ROOT_DIRECTORY;
+if (!ROOT_DIRECTORY) throw new Error("const ROOT_DIRECTORY undefined");
+
+export const PRODUCTS_IMAGES_PATH = "products";
+
 export const DEFAULT_ROLES = ["READER", "USER", "SUPERADMIN"];

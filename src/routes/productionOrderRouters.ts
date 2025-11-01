@@ -3,6 +3,7 @@ import { Router } from "express";
 import {
   ChangeProductionOrderStatusController,
   CreateProductionOrderController,
+  GetProductionOrderReport,
   GetProductionOrdersController,
   UpdateProductionOrderController,
 } from "@/controllers/ProductionOrderController";
@@ -342,6 +343,51 @@ export const productionOrderRoutes = (): Router => {
     [verifyToken, isUser, validateIdMiddleware, validateOrderState],
     ChangeProductionOrderStatusController,
   );
+
+  /**
+   * @swagger
+   * /api/v1.0/production-orders/report/{id}:
+   *   get:
+   *     summary: Generar reporte PDF de una orden de producción
+   *     security:
+   *       - BearerAuth: []
+   *     tags: [Órdenes de Producción]
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         schema:
+   *           type: number
+   *         description: ID de la orden de producción
+   *         required: true
+   *     responses:
+   *       200:
+   *         description: PDF generado exitosamente
+   *         content:
+   *           application/pdf:
+   *             schema:
+   *               type: string
+   *               format: binary
+   *       404:
+   *         description: Not Found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/GenericResponseSchema'
+   *             example:
+   *               status: false
+   *               message: "Orden de producción no encontrada"
+   *       500:
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/GenericResponseSchema'
+   */
+  routerRoot.get(
+    "/report/:id",
+    [verifyToken, validateIdMiddleware],
+    GetProductionOrderReport,
+  );
+
   /**
    * @swagger
    * /api/v1.0/production-orders/{id}:

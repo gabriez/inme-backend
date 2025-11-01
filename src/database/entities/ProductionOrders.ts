@@ -28,7 +28,7 @@ export class ProductionOrders extends CoreEntity {
     type: "date",
     nullable: true,
   })
-  startDate: Date;
+  startDate?: Date;
 
   @Column({
     type: "date",
@@ -39,7 +39,7 @@ export class ProductionOrders extends CoreEntity {
     type: "date",
     nullable: true,
   })
-  realEndDate: Date;
+  realEndDate?: Date;
 
   @Column({
     type: "varchar",
