@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reporte de Historial - INME</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        color: #333;
+        line-height: 1.6;
+        padding: 40px;
+        background: #fff;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding-bottom: 40px;
+        padding-top: 20px;
+        border-bottom: 3px solid #1260ef;
+        position: relative;
+      }
+
+      .header-info {
+        margin: auto;
+      }
+
+      .header h1 {
+        color: #1260ef;
+        font-size: 32px;
+        margin-bottom: 10px;
+      }
+
+      .header .subtitle {
+        color: #666;
+        font-size: 14px;
+      }
+
+      .header .date {
+        color: #999;
+        font-size: 12px;
+        margin-top: 10px;
+      }
+
+      .svg-container {
+        background: #000;
+        padding: 10px;
+        border-radius: 8px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .section {
+        margin-bottom: 40px;
+        page-break-inside: avoid;
+      }
+
+      .section-title {
+        color: #1260ef;
+        font-size: 20px;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #57d7f5;
+      }
+
+      .summary-box {
+        background: linear-gradient(135deg, #57d7f5 0%, #1260ef 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .summary-box h2 {
+        font-size: 48px;
+        margin-bottom: 5px;
+      }
+
+      .summary-box p {
+        font-size: 16px;
+        opacity: 0.9;
+      }
+
+      .filters-info {
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        border-left: 4px solid #1260ef;
+      }
+
+      .filters-info h3 {
+        color: #1260ef;
+        font-size: 16px;
+        margin-bottom: 15px;
+      }
+
+      .filter-item {
+        display: flex;
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+
+      .filter-label {
+        font-weight: 600;
+        min-width: 120px;
+        color: #666;
+      }
+
+      .filter-value {
+        color: #333;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        font-size: 12px;
+      }
+
+      thead {
+        background: linear-gradient(90deg, #57d7f5 0%, #1260ef 100%);
+        color: white;
+      }
+
+      th {
+        padding: 12px 8px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 12px;
+      }
+
+      td {
+        padding: 10px 8px;
+        border-bottom: 1px solid #eee;
+        word-wrap: break-word;
+        max-width: 200px;
+      }
+
+      tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      tbody tr:hover {
+        background-color: #f0f8ff;
+      }
+
+      .action-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: capitalize;
+      }
+
+      .action-ingreso {
+        background: #e8f5e9;
+        color: #2e7d32;
+      }
+
+      .action-egreso {
+        background: #ffebee;
+        color: #c62828;
+      }
+
+      .action-venta {
+        background: #e3f2fd;
+        color: #1565c0;
+      }
+
+      .action-ordenproduccion {
+        background: #fff3e0;
+        color: #e65100;
+      }
+
+      .action-varios {
+        background: #f3e5f5;
+        color: #6a1b9a;
+      }
+
+      .action-gastodeproduccion {
+        background: #fce4ec;
+        color: #880e4f;
+      }
+
+      .action-ingresoporproduccion {
+        background: #e0f2f1;
+        color: #00695c;
+      }
+
+      .footer {
+        margin-top: 60px;
+        padding-top: 20px;
+        border-top: 2px solid #eee;
+        text-align: center;
+        color: #999;
+        font-size: 12px;
+      }
+
+      .no-data {
+        text-align: center;
+        padding: 40px;
+        color: #999;
+        font-style: italic;
+      }
+
+      @media print {
+        body {
+          padding: 20px;
+        }
+
+        .section {
+          page-break-inside: avoid;
+        }
+
+        table {
+          page-break-inside: auto;
+        }
+
+        tr {
+          page-break-inside: avoid;
+          page-break-after: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <div class="svg-container">
+        <svg
+          width="130"
+          height="130"
+          viewBox="0 0 130 130"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M71.8302 35.32L72.0552 36.29H71.0752L71.8302 35.32Z"
+            fill="#ffffff"
+          />
+          <path
+            d="M110.065 71.015H80.0852L77.2552 58.8L101.805 36.29H71.0752L94.7102 4.67L110.065 71.015Z"
+            fill="#ffffff"
+          />
+          <path
+            d="M90.5751 40.65L80.9451 49.48L76.1251 53.905L61.7551 67.075L26.6901 98.96L46.1851 67.075L50.2351 60.45L53.0101 55.905H19.9351L23.4751 51.15L61.6251 0H92.6751L62.1051 40.65H90.5751Z"
+            fill="#57D7F5"
+          />
+          <path
+            d="M4.25 108.315H11.415L7.165 129.515H0L4.25 108.315Z"
+            fill="#ffffff"
+          />
+          <path
+            d="M35.8151 108.315L31.5651 129.515H25.6751L19.5751 119.64L17.6001 129.515H10.6201L14.8701 108.315H20.7601L26.8601 118.19L28.8351 108.315H35.8151Z"
+            fill="#ffffff"
+          />
+          <path
+            d="M64.7099 108.315L60.5199 129.515H53.9949L55.8749 119.855L49.8949 127.61H46.7399L43.4599 119.98L41.5499 129.52H35.0249L39.2749 108.32H45.1049L49.7199 119.585L58.6149 108.32H64.7149L64.7099 108.315Z"
+            fill="#ffffff"
+          />
+          <path
+            d="M74.1799 113.705L73.6949 116.19H82.6799L81.6499 121.34H72.6349L72.0899 124.125H82.7449L81.6499 129.515H63.9849L68.2349 108.315H85.5049L84.4099 113.705H74.1799Z"
+            fill="#ffffff"
+          />
+          <path
+            d="M90.7702 128.805C89.1202 128.01 87.8452 126.89 86.9452 125.46C86.0452 124.025 85.5952 122.38 85.5952 120.525C85.5952 118.06 86.1652 115.87 87.3102 113.955C88.4552 112.035 90.0402 110.54 92.0752 109.46C94.1102 108.38 96.4202 107.84 99.0102 107.84C101.055 107.84 102.865 108.21 104.445 108.945C106.025 109.68 107.195 110.725 107.965 112.08L102.805 116.11C101.855 114.455 100.44 113.625 98.5552 113.625C97.4402 113.625 96.4502 113.895 95.5802 114.445C94.7102 114.99 94.0302 115.75 93.5452 116.73C93.0602 117.71 92.8152 118.825 92.8152 120.075C92.8152 121.325 93.2152 122.33 94.0152 123.09C94.8152 123.845 95.8702 124.225 97.1852 124.225C98.9852 124.225 100.565 123.405 101.92 121.77L106.14 125.8C104.905 127.315 103.505 128.395 101.935 129.04C100.365 129.685 98.5502 130.01 96.4852 130.01C94.3202 130.01 92.4152 129.61 90.7652 128.815L90.7702 128.805Z"
+            fill="#ffffff"
+          />
+          <path
+            d="M122.17 125.82H114.065L111.94 129.515H104.38L117.92 108.315H124.96L130 129.515H122.865L122.165 125.82H122.17ZM121.165 120.675L120.135 115.255L117.01 120.675H121.17H121.165Z"
+            fill="#ffffff"
+          />
+        </svg>
+      </div>
+      <div class="header-info">
+        <h1>Reporte de Historial</h1>
+        <p class="subtitle">Sistema de Gestión INME</p>
+        <p class="date">Generado el {{generatedDate}}</p>
+      </div>
+    </div>
+
+    <!-- Resumen Total -->
+    <div class="section">
+      <div class="summary-box">
+        <h2>{{totalRecords}}</h2>
+        <p>Registros en el Historial</p>
+      </div>
+    </div>
+
+    <!-- Filtros Aplicados -->
+    {{#hasFilters}}
+    <div class="filters-info">
+      <h3>📋 Filtros Aplicados</h3>
+      {{#filterStartDate}}
+      <div class="filter-item">
+        <span class="filter-label">Fecha Desde:</span>
+        <span class="filter-value">{{filterStartDate}}</span>
+      </div>
+      {{/filterStartDate}} {{#filterEndDate}}
+      <div class="filter-item">
+        <span class="filter-label">Fecha Hasta:</span>
+        <span class="filter-value">{{filterEndDate}}</span>
+      </div>
+      {{/filterEndDate}} {{#filterAction}}
+      <div class="filter-item">
+        <span class="filter-label">Acción:</span>
+        <span class="filter-value">{{filterAction}}</span>
+      </div>
+      {{/filterAction}} {{#filterProduct}}
+      <div class="filter-item">
+        <span class="filter-label">Producto:</span>
+        <span class="filter-value">{{filterProduct}}</span>
+      </div>
+      {{/filterProduct}} {{#filterProvider}}
+      <div class="filter-item">
+        <span class="filter-label">Proveedor:</span>
+        <span class="filter-value">{{filterProvider}}</span>
+      </div>
+      {{/filterProvider}} {{#filterClient}}
+      <div class="filter-item">
+        <span class="filter-label">Cliente:</span>
+        <span class="filter-value">{{filterClient}}</span>
+      </div>
+      {{/filterClient}}
+    </div>
+    {{/hasFilters}}
+
+    <!-- Tabla de Historial -->
+    <div class="section">
+      <h2 class="section-title">📊 Registros del Historial</h2>
+      {{#hasData}}
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 80px">Orden</th>
+            <th style="width: 130px">Fecha</th>
+            <th style="width: 150px">Producto</th>
+            <th style="width: 120px">Proveedor</th>
+            <th style="width: 120px">Cliente</th>
+            <th style="width: 200px">Descripción</th>
+            <th style="width: 70px; text-align: center">Cantidad</th>
+            <th style="width: 120px">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#historyRecords}}
+          <tr>
+            <td>{{productionOrderId}}</td>
+            <td>{{formattedDate}}</td>
+            <td>{{productName}}</td>
+            <td>{{providerName}}</td>
+            <td>{{clientName}}</td>
+            <td style="font-size: 11px">{{description}}</td>
+            <td style="text-align: center; font-weight: 600">{{cantidad}}</td>
+            <td>
+              <span class="action-badge action-{{actionClass}}"
+                >{{action}}</span
+              >
+            </td>
+          </tr>
+          {{/historyRecords}}
+        </tbody>
+      </table>
+      {{/hasData}} {{^hasData}}
+      <div class="no-data">No hay registros de historial para mostrar</div>
+      {{/hasData}}
+    </div>
+
+    <div class="footer">
+      <p>
+        Este reporte fue generado automáticamente por el Sistema de Gestión INME
+      </p>
+      <p>© {{currentYear}} INME - Todos los derechos reservados</p>
+    </div>
+  </body>
+</html>

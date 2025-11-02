@@ -59,6 +59,7 @@ export const GetProductsController = async (
         codigo: true,
         nombre: true,
         productType: true,
+        imageUri: true,
         measureUnit: true,
         existenciaReservada: true,
         existencia: true,

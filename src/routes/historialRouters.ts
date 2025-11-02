@@ -1,6 +1,9 @@
 import { Router } from "express";
 
-import { GetHistory } from "@/controllers/HistorialController";
+import {
+  GenerateHistorialReportPDF,
+  GetHistory,
+} from "@/controllers/HistorialController";
 import { verifyToken } from "@/middlewares/authJWT";
 
 export const historialRouters = (): Router => {
@@ -112,5 +115,70 @@ export const historialRouters = (): Router => {
    *               $ref: '#/components/schemas/ErrorUnexpectedSchema'
    */
   routerRoot.get("/", [verifyToken], GetHistory);
+
+  /**
+   * @swagger
+   * /api/v1.0/history/report/pdf:
+   *   get:
+   *     summary: Generar reporte PDF del historial con filtros aplicados
+   *     security:
+   *       - BearerAuth: []
+   *     tags: [Historial]
+   *     parameters:
+   *       - in: query
+   *         name: limit
+   *         schema:
+   *           type: number
+   *         description: Número máximo de registros a incluir en el reporte (por defecto 20)
+   *       - in: query
+   *         name: productId
+   *         schema:
+   *           type: number
+   *         description: Filtrar por ID de producto
+   *       - in: query
+   *         name: providerId
+   *         schema:
+   *           type: number
+   *         description: Filtrar por ID de proveedor
+   *       - in: query
+   *         name: clientId
+   *         schema:
+   *           type: number
+   *         description: Filtrar por ID de cliente
+   *       - in: query
+   *         name: action
+   *         schema:
+   *           type: string
+   *           enum: [INGRESO, EGRESO, VENTA, VARIOS, ORDENPRODUCCION, GASTODEPRODUCCION, INGRESOPORPRODUCCION]
+   *         description: Filtrar por tipo de acción del historial
+   *       - in: query
+   *         name: startDate
+   *         schema:
+   *           type: string
+   *           format: date-time
+   *         description: Fecha de inicio del rango (ISO 8601)
+   *       - in: query
+   *         name: endDate
+   *         schema:
+   *           type: string
+   *           format: date-time
+   *         description: Fecha de fin del rango (ISO 8601)
+   *     responses:
+   *       200:
+   *         description: PDF generado exitosamente
+   *         content:
+   *           application/pdf:
+   *             schema:
+   *               type: string
+   *               format: binary
+   *       401:
+   *         description: Unauthorized
+   *       422:
+   *         description: Unprocessable Entity - Acción inválida
+   *       500:
+   *         description: Error interno del servidor
+   */
+  routerRoot.get("/report/pdf", [verifyToken], GenerateHistorialReportPDF);
+
   return routerRoot;
 };
