@@ -56,7 +56,6 @@ export const exportDatabase = async (
         message: "Datos requeridos",
       });
     }
-    console.log(req.body);
 
     const { username, password } = req.body;
 

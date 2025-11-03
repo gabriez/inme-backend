@@ -16,6 +16,9 @@
     "dev": "tsx watch src/index.ts",
     "dev:docker": "docker compose up",
     "migrate": "tsx scripts/migrate.ts",
+    "migration:run": "yarn typeorm migration:run -d ./src/database/appDataSource.ts",
+    "migration:revert": "yarn typeorm migration:revert -d ./src/database/appDataSource.ts",
+    "migration:show": "yarn typeorm migration:show -d ./src/database/appDataSource.ts",
     "typeorm": "tsx ./node_modules/typeorm/cli.js",
     "prepare": "husky",
     "test": "jest --coverage"

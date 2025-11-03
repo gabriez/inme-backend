@@ -1,0 +1,137 @@
+version: "3.8"
+
+services:
+  database:
+    image: postgres:16-alpine
+    container_name: inme-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      PGDATA: /var/lib/postgresql/data/pgdata
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Backup automático (opcional)
+      - ./backups:/backups
+
+    networks:
+      - inme-network
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    # Exponer puerto solo para desarrollo (comentar en producción)
+    # ports:
+    #   - "5432:5432"
+  backend:
+    build:
+      context: ./inme-backend
+      dockerfile: Dockerfile.prod
+      target: production
+
+    container_name: inme-backend-prod
+    restart: unless-stopped
+
+    environment:
+      NODE_ENV: production
+      PORT: 3030
+
+      # Database
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+      # JWT
+      JWT_SECRET: ${JWT_SECRET}
+
+      # CORS
+      CORS_ORIGIN: ${CORS_ORIGIN}
+    volumes:
+      # Volumen para archivos subidos (imágenes)
+      - assets_data:/home/tmp/inme
+      # Volumen para templates (si necesitas modificarlos sin rebuild)
+      - ./inme-backend/src/templates:/app/src/templates:ro
+
+    networks:
+      - inme-network
+
+    depends_on:
+      database:
+        condition: service_healthy
+
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "require('http').get('http://localhost:3030/api/v1.0/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: inme-nginx
+    restart: unless-stopped
+
+    ports:
+      # HTTP
+      - "80:80"
+      # HTTPS (descomentar cuando tengas certificados SSL)
+      # - "443:443"
+
+    volumes:
+      # Configuración de Nginx
+      - ./nginx/nginx-prod.conf:/etc/nginx/nginx.conf:ro
+      - assets_data:/home/tmp/inme:ro
+      # Certificados SSL (descomentar en producción)
+      # - ./nginx/ssl:/etc/letsencrypt:ro
+
+      # Logs de Nginx
+      - nginx_logs:/var/log/nginx
+
+    networks:
+      - inme-network
+
+    depends_on:
+      - backend
+
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://localhost/api/v1.0/health",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  inme-network:
+    driver: bridge
+    name: inme-network
+
+volumes:
+  postgres_data:
+    driver: local
+    name: inme-postgres-data
+  assets_data:
+    driver: local
+    name: inme-uploads-data
+  nginx_logs:
+    driver: local
+    name: inme-nginx-logs

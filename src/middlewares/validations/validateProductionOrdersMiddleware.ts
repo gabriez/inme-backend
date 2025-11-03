@@ -7,7 +7,6 @@ import type {
 
 import z from "zod";
 
-import { HistorialAction } from "@/database/entities/Historial";
 import { OrderState } from "@/database/entities/ProductionOrders";
 
 const isAfterToday = (d: Date) => {
@@ -108,8 +107,6 @@ export function validateOrderState(
     });
   }
   const validOrders = Object.keys(OrderState);
-  console.log(orderState, validOrders, OrderState);
-  console.log(HistorialAction);
 
   if (!validOrders.includes(orderState as OrderState)) {
     resErr.json({
@@ -119,7 +116,6 @@ export function validateOrderState(
     return;
   }
   const orderStateEnum = OrderState[orderState as keyof typeof OrderState];
-  console.log(orderStateEnum);
   req.body.orderStateEnum = orderStateEnum;
   next();
 }

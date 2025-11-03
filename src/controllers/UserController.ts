@@ -59,7 +59,6 @@ export const GetUsers = async (req: GetUsersReq, res: ResponseAPI) => {
     const take = Number(limit) || 10;
     const skip = Number(offset) || 0;
 
-    console.log(limit, offset, nombre, rol, username);
     const whereClause: FindOptionsWhere<Users> = {};
 
     if (email && email.length > 0) {
@@ -90,7 +89,6 @@ export const GetUsers = async (req: GetUsersReq, res: ResponseAPI) => {
     };
 
     const [users, total] = await UserRepository.findAndCount(options);
-    console.log(users);
     res.status(200).json({
       status: true,
       data: { total, users },

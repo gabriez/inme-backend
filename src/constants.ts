@@ -3,6 +3,7 @@ dotenv.config();
 
 export const PORT_APP = process.env.PORT;
 export const jwtSecret = process.env.JWT_SECRET ?? "jwtSecret";
+export const CORS = process.env.CORS;
 
 export const DB = {
   host: process.env.DB_HOST,
@@ -13,8 +14,7 @@ export const DB = {
   ssl: process.env.DB_SSL === "true",
 };
 
-export const ROOT_DIRECTORY = process.env.ROOT_DIRECTORY;
-if (!ROOT_DIRECTORY) throw new Error("const ROOT_DIRECTORY undefined");
+export const ROOT_DIRECTORY = "/home/tmp/inme";
 
 export const PRODUCTS_IMAGES_PATH = "products";
 

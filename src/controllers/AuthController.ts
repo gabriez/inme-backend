@@ -12,7 +12,6 @@ import { GlobalRepository } from "@/database/repositories/globalRepository";
 import { jwtSecret } from "../constants";
 
 export function createToken(user: Users) {
-  console.log(user);
   const { id, username, rol } = user;
   return jwt.sign({ username, id, rol }, jwtSecret, {
     expiresIn: 86_400 /* 1 day */,
@@ -142,10 +141,8 @@ export const signIn = async (req: IsignInReq, res: ResponseAPI) => {
       });
       return;
     }
-    console.log(password);
 
     const isMatch = await user.comparePassword(password);
-    console.log(password);
 
     if (isMatch) {
       res.status(200).json({

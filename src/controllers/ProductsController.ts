@@ -88,7 +88,6 @@ export const GetProductsController = async (
     };
 
     const [products, total] = await ProductsRepository.findAndCount(options);
-    console.log(products);
     res.status(200).json({
       status: true,
       data: { products, total },
@@ -426,7 +425,6 @@ export const ChargeProductsController = async (
     //TODO: cargar productos en historial
 
     const { quantity, actionEnum, description, provider } = req.body;
-    console.log(actionEnum);
     if (
       actionEnum !== HistorialAction.INGRESO &&
       actionEnum !== HistorialAction.VARIOS

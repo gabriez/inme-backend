@@ -1,0 +1,108 @@
+# ============================================
+# Dockerfile para Producción - Backend INME
+# ============================================
+
+# ============================================
+# Stage 1: Build Stage
+# ============================================
+FROM node:22.19.0-slim AS builder
+
+WORKDIR /app
+
+# Copiar archivos de dependencias
+COPY package.json yarn.lock ./
+
+# Instalar dependencias (incluyendo devDependencies para el build)
+RUN yarn install --frozen-lockfile
+
+# Copiar el código fuente
+COPY . .
+
+# Compilar TypeScript a JavaScript
+RUN yarn build
+
+# ============================================
+# Stage 2: Production Stage
+# ============================================
+FROM node:22.19.0-slim AS production
+
+WORKDIR /app
+
+# Variables de entorno
+ENV NODE_ENV=production
+ENV PORT=3030
+
+# Instalar dependencias del sistema para Puppeteer y PostgreSQL client
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg \
+    ca-certificates \
+    postgresql-client \
+    fonts-liberation \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libc6 \
+    libcairo2 \
+    libcups2 \
+    libdbus-1-3 \
+    libexpat1 \
+    libfontconfig1 \
+    libgbm1 \
+    libgcc1 \
+    libglib2.0-0 \
+    libgtk-3-0 \
+    libnspr4 \
+    libnss3 \
+    libpango-1.0-0 \
+    libpangocairo-1.0-0 \
+    libstdc++6 \
+    libx11-6 \
+    libx11-xcb1 \
+    libxcb1 \
+    libxcomposite1 \
+    libxcursor1 \
+    libxdamage1 \
+    libxext6 \
+    libxfixes3 \
+    libxi6 \
+    libxrandr2 \
+    libxrender1 \
+    libxss1 \
+    libxtst6 \
+    lsb-release \
+    xdg-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copiar archivos de dependencias
+COPY package.json yarn.lock ./
+
+# Instalar solo dependencias de producción
+RUN yarn install --frozen-lockfile --production && yarn cache clean
+
+# Copiar el código compilado desde el stage de build
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/src/templates ./src/templates
+COPY --from=builder /app/src/database ./src/database
+
+# Copiar scripts de migraciones
+COPY scripts/run_migrations.sh ./scripts/run_migrations.sh
+COPY scripts/docker-entrypoint.sh ./scripts/docker-entrypoint.sh
+RUN chmod +x ./scripts/run_migrations.sh ./scripts/docker-entrypoint.sh
+
+# Crear usuario no-root para seguridad
+RUN groupadd -r inme && useradd -r -g inme inme && \
+    chown -R inme:inme /app
+
+# Cambiar a usuario no-root
+USER inme
+
+# Exponer el puerto
+EXPOSE $PORT
+
+# Healthcheck para monitoreo
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD node -e "require('http').get('http://localhost:${PORT}/api/v1.0/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+
+# Comando para iniciar la aplicación (ejecuta migraciones primero)
+CMD ["./scripts/docker-entrypoint.sh"]
