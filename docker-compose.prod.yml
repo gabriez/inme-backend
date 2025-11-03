@@ -51,7 +51,7 @@ services:
       JWT_SECRET: ${JWT_SECRET}
 
       # CORS
-      CORS_ORIGIN: ${CORS_ORIGIN}
+      CORS: ${CORS}
     volumes:
       # Volumen para archivos subidos (imágenes)
       - assets_data:/home/tmp/inme
