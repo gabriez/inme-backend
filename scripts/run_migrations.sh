@@ -25,6 +25,13 @@ node ../node_modules/typeorm/cli.js migration:run -d ../src/database/appDataSour
 
 echo "Migraciones ejecutadas exitosamente!"
 
+ls 
+
+ls ../
+
+ls /node_modules/typeorm/cli.js
+
+pwd
 # Ejecutar seeders (opcional, comentar si no se necesita)
 # echo " Ejecutando seeders..."
 node ../node_modules/typeorm/cli.js migration:run -d ../src/database/seeders/seedersDataSource.js
