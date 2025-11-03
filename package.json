@@ -2,13 +2,12 @@
   "name": "template-api",
   "version": "0.0.1",
   "private": true,
-  "type": "module",
   "author": "Gabriel Torres - Gitlab: @gabotdev | Github: @gabriez",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
-    "build:ci": "npx tsc -p tsconfig.json",
-    "start": "node dist/index.js",
+    "build": "tsc && tsc-alias",
+    "build:ci": "npx tsc -p tsconfig.json && npx tsc-alias",
+    "start": "node dist/src/index.js",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "format": "npx prettier --write .",
@@ -87,6 +86,7 @@
     "supertest": "^7.1.4",
     "ts-jest": "^29.4.1",
     "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.10",
     "tsx": "4.19.4",
     "typescript": "5.8.3"
   }

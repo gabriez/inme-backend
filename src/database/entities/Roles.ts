@@ -1,6 +1,6 @@
 import { Column, Entity } from "typeorm";
 
-import { CoreEntity } from "./CoreEntity.js";
+import { CoreEntity } from "./CoreEntity";
 
 @Entity()
 export class Roles extends CoreEntity {

@@ -1,8 +1,8 @@
 import { Column, Entity, JoinTable, ManyToMany, OneToMany } from "typeorm";
 
-import { CoreEntity } from "./CoreEntity.js";
-import { MaterialsList } from "./MaterialsList.js";
-import { Providers } from "./Providers.js";
+import { CoreEntity } from "./CoreEntity";
+import { MaterialsList } from "./MaterialsList";
+import { Providers } from "./Providers";
 
 export enum ProductType {
   INSUMOS = "insumos",

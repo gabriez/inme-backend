@@ -83,6 +83,12 @@ const config = [
     },
   },
   {
+    files: ["src/index.ts", "scripts/migrate.ts"],
+    rules: {
+      "unicorn/prefer-top-level-await": "off",
+    },
+  },
+  {
     files: ["**/*.{ts,tsx}"],
     rules: {
       "simple-import-sort/imports": [

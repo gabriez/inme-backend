@@ -1,8 +1,7 @@
 import type { Express } from "express";
 
-import AppDataSource from "src/database/appDataSource";
-
-import { buildRepositories } from "./database/repositories/globalRepository";
+import AppDataSource from "@/database/appDataSource";
+import { buildRepositories } from "@/database/repositories/globalRepository";
 
 async function main() {
   try {
@@ -11,7 +10,7 @@ async function main() {
 
     // Importing app dynamically to ensure that all previous async operations are completed
     // ensuring GlobalRepository singleton is not undefined in other files
-    const imported = await import("./app");
+    const imported = await import("./app.js");
     const app = imported.default as Express;
     const port: number = app.get("port") as number;
     app.listen(port, () => {
@@ -21,5 +20,4 @@ async function main() {
     console.log(error);
   }
 }
-
-await main();
+void main();

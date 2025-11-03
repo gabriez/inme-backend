@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/controllers/*": ["src/controllers/*.js"],
+      "@/database/*": ["src/database/*.js"],
+      "@/libs/*": ["src/contexts/libs/*.js"],
+      "@/middlewares/*": ["src/middlewares/*.js"],
+      "@/routes/*": ["src/routes/*.js"],
+      "@/*": ["src/*.js"]
+    }
+  }
+}

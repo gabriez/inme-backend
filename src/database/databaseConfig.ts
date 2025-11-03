@@ -1,15 +1,15 @@
 import type { DataSourceOptions } from "typeorm";
 
-import { DB } from "../constants.js";
-import { Client } from "./entities/Client.js";
-import { Historial } from "./entities/Historial.js";
-import { MaterialsList } from "./entities/MaterialsList.js";
-import { ProductionOrders } from "./entities/ProductionOrders.js";
-import { Products } from "./entities/Products.js";
-import { Providers } from "./entities/Providers.js";
+import { DB } from "../constants";
+import { Client } from "./entities/Client";
+import { Historial } from "./entities/Historial";
+import { MaterialsList } from "./entities/MaterialsList";
+import { ProductionOrders } from "./entities/ProductionOrders";
+import { Products } from "./entities/Products";
+import { Providers } from "./entities/Providers";
 /* entities */
-import { Roles } from "./entities/Roles.js";
-import { Users } from "./entities/Users.js";
+import { Roles } from "./entities/Roles";
+import { Users } from "./entities/Users";
 
 const databaseConfig: DataSourceOptions = {
   type: "postgres",

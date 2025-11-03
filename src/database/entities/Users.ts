@@ -8,8 +8,8 @@ import {
   ManyToMany,
 } from "typeorm";
 
-import { CoreEntity } from "./CoreEntity.js";
-import { Roles } from "./Roles.js";
+import { CoreEntity } from "./CoreEntity";
+import { Roles } from "./Roles";
 
 @Entity()
 export class Users extends CoreEntity {

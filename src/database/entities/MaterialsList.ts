@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
-import { CoreEntity } from "./CoreEntity.js";
-import { Products } from "./Products.js";
+import { CoreEntity } from "./CoreEntity";
+import { Products } from "./Products";
 
 @Entity()
 export class MaterialsList extends CoreEntity {

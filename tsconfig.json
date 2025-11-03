@@ -3,10 +3,10 @@
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
     "baseUrl": ".",
-    "module": "es2022",
+    "module": "commonjs",
     "target": "ES2020",
-    "lib": ["ES2021"],
-    "moduleResolution": "node",
+    "lib": ["ES2021", "ES2022"],
+    "moduleResolution": "node10",
     "esModuleInterop": true,
     "strict": true,
     "outDir": "dist",

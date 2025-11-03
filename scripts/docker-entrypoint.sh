@@ -16,4 +16,4 @@ echo "🐳 Iniciando contenedor INME Backend..."
 
 # Iniciar el servidor
 echo "🚀 Iniciando servidor Node.js..."
-exec node dist/index.js
+exec node dist/src/index.js
