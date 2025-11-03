@@ -1,5 +1,6 @@
 import type { DataSourceOptions } from "typeorm";
 
+import { DB } from "../constants.js";
 import { Client } from "./entities/Client.js";
 import { Historial } from "./entities/Historial.js";
 import { MaterialsList } from "./entities/MaterialsList.js";
@@ -9,8 +10,6 @@ import { Providers } from "./entities/Providers.js";
 /* entities */
 import { Roles } from "./entities/Roles.js";
 import { Users } from "./entities/Users.js";
-
-import { DB } from "@/constants";
 
 const databaseConfig: DataSourceOptions = {
   type: "postgres",

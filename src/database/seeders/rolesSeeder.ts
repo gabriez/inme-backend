@@ -1,8 +1,7 @@
 import type { QueryRunner } from "typeorm";
 
-import { Roles } from "@/database/entities/Roles";
-
-import { DEFAULT_ROLES } from "@/constants";
+import { DEFAULT_ROLES } from "../../constants.js";
+import { Roles } from "../entities/Roles.js";
 
 export async function rolesSeeder(queryRunner: QueryRunner) {
   const RolesRepository = queryRunner.connection.getRepository(Roles);
