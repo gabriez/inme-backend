@@ -6,7 +6,7 @@ services:
 
     environment:
       POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
+      POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       PGDATA: /var/lib/postgresql/data/pgdata
 
@@ -44,7 +44,7 @@ services:
       DB_HOST: database
       DB_PORT: 5432
       DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
+      DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
 
       # JWT
