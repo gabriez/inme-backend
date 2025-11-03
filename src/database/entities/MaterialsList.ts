@@ -1,7 +1,8 @@
+import type { Products } from "./Products.js";
+
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
 import { CoreEntity } from "./CoreEntity.js";
-import { Products } from "./Products.js";
 
 @Entity()
 export class MaterialsList extends CoreEntity {
@@ -16,7 +17,12 @@ export class MaterialsList extends CoreEntity {
   }) // <-- Esta es la columna real en la tabla
   public idProdCompuestoId: number;
 
-  @ManyToOne(() => Products, (products) => products.id, { lazy: true })
+  @ManyToOne(
+    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, unicorn/prefer-module
+    () => require("./Products.js").Products,
+    (products: Products) => products.id,
+    { lazy: true },
+  )
   @JoinColumn({ name: "idProdCompuestoId" })
   public idProdCompuesto: Partial<Products>;
 
@@ -25,7 +31,11 @@ export class MaterialsList extends CoreEntity {
   })
   public idProdComponenteId: number;
 
-  @ManyToOne(() => Products, (products) => products.id)
+  @ManyToOne(
+    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, unicorn/prefer-module
+    () => require("./Products.js").Products,
+    (products: Products) => products.id,
+  )
   @JoinColumn({ name: "idProdComponenteId" })
   public componentProduct: Products;
 }

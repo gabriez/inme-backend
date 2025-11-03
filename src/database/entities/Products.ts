@@ -1,8 +1,9 @@
+import type { MaterialsList } from "./MaterialsList.js";
+import type { Providers } from "./Providers.js";
+
 import { Column, Entity, JoinTable, ManyToMany, OneToMany } from "typeorm";
 
 import { CoreEntity } from "./CoreEntity.js";
-import { MaterialsList } from "./MaterialsList.js";
-import { Providers } from "./Providers.js";
 
 export enum ProductType {
   INSUMOS = "insumos",
@@ -66,13 +67,18 @@ export class Products extends CoreEntity {
   productType: ProductType;
 
   @OneToMany(
-    () => MaterialsList,
-    (materialsList) => materialsList.idProdCompuesto,
+    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, unicorn/prefer-module
+    () => require("./MaterialsList.js").MaterialsList,
+    (materialsList: MaterialsList) => materialsList.idProdCompuesto,
     { cascade: ["insert"] },
   )
   public materialsList: MaterialsList[];
 
-  @ManyToMany(() => Providers, (providers) => providers.id)
+  @ManyToMany(
+    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, unicorn/prefer-module
+    () => require("./Providers.js").Providers,
+    (providers: Providers) => providers.id,
+  )
   @JoinTable({
     name: "providers_products_products",
   })
