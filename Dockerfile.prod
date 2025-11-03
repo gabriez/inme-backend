@@ -78,7 +78,7 @@ RUN apt-get update && apt-get install -y \
 COPY package.json yarn.lock ./
 
 # Instalar solo dependencias de producción
-RUN yarn install --frozen-lockfile --production && yarn cache clean
+RUN yarn install --frozen-lockfile && yarn cache clean
 
 # Copiar el código compilado desde el stage de build
 COPY --from=builder /app/dist ./dist
