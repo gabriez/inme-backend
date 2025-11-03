@@ -1,8 +1,7 @@
-import type { Products } from "./Products.js";
-
 import { Column, Entity, ManyToMany } from "typeorm";
 
 import { CoreEntity } from "./CoreEntity.js";
+import { Products } from "./Products.js";
 
 @Entity()
 export class Providers extends CoreEntity {
@@ -71,9 +70,6 @@ export class Providers extends CoreEntity {
   })
   instagram: string;
 
-  @ManyToMany(
-    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, unicorn/prefer-module
-    () => require("./Products.js").Products,
-  )
+  @ManyToMany(() => Products, (products) => products.id)
   products: Products[];
 }

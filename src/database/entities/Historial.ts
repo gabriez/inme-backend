@@ -1,11 +1,10 @@
-import type { Client } from "./Client.js";
-import type { ProductionOrders } from "./ProductionOrders.js";
-import type { Products } from "./Products.js";
-import type { Providers } from "./Providers.js";
-
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
+import { Client } from "./Client.js";
 import { CoreEntity } from "./CoreEntity.js";
+import { ProductionOrders } from "./ProductionOrders.js";
+import { Products } from "./Products.js";
+import { Providers } from "./Providers.js";
 
 export enum HistorialAction {
   INGRESO = "ingreso",
@@ -36,35 +35,19 @@ export class Historial extends CoreEntity {
   })
   cantidad: number;
 
-  @ManyToOne(
-    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, unicorn/prefer-module
-    () => require("./Products.js").Products,
-    { nullable: true },
-  )
+  @ManyToOne(() => Products, { nullable: true })
   @JoinColumn()
   product?: Products;
 
-  @ManyToOne(
-    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, unicorn/prefer-module
-    () => require("./Client.js").Client,
-    { nullable: true },
-  )
+  @ManyToOne(() => Client, { nullable: true })
   @JoinColumn()
   client?: Client;
 
-  @ManyToOne(
-    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, unicorn/prefer-module
-    () => require("./Providers.js").Providers,
-    { nullable: true },
-  )
+  @ManyToOne(() => Providers, { nullable: true })
   @JoinColumn()
   provider?: Providers;
 
-  @ManyToOne(
-    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, unicorn/prefer-module
-    () => require("./ProductionOrders.js").ProductionOrders,
-    { nullable: true },
-  )
+  @ManyToOne(() => ProductionOrders, { nullable: true })
   @JoinColumn()
   productionOrder?: ProductionOrders;
 }

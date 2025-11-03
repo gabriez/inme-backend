@@ -1,8 +1,7 @@
-import type { Products } from "./Products.js";
-
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
 import { CoreEntity } from "./CoreEntity.js";
+import { Products } from "./Products.js";
 
 export enum OrderState {
   EnProceso = "En proceso",
@@ -48,10 +47,7 @@ export class ProductionOrders extends CoreEntity {
   })
   responsables: string;
 
-  @ManyToOne(
-    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, unicorn/prefer-module
-    () => require("./Products.js").Products,
-  )
+  @ManyToOne(() => Products)
   @JoinColumn()
   product: Products;
 }
