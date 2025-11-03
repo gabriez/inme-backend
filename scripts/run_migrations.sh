@@ -11,7 +11,7 @@ set -e
 echo "Esperando a que la base de datos esté lista..."
 
 # Esperar a que PostgreSQL esté listo
-until PGPASSWORD=$DB_PASSWORD psql -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" -c '\q' 2>/dev/null; do
+until PGPASSWORD=$DB_PASSWORD psql -h "$DB_HOST" -U "$DB_USERNAME" -d "$DB_NAME" -c '\q' 2>/dev/null; do
   echo " PostgreSQL no está listo aún - esperando..."
   sleep 2
 done
