@@ -95,7 +95,7 @@ RUN chmod +x ./scripts/run_migrations.sh ./scripts/docker-entrypoint.sh
 #     chown -R inme:inme /app
 
 # Cambiar a usuario no-root
-USER inme
+# USER inme
 
 # Exponer el puerto
 EXPOSE $PORT
