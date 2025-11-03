@@ -1,14 +1,14 @@
 import type { DataSourceOptions } from "typeorm";
 
+import { Client } from "./entities/Client.js";
+import { Historial } from "./entities/Historial.js";
+import { MaterialsList } from "./entities/MaterialsList.js";
+import { ProductionOrders } from "./entities/ProductionOrders.js";
+import { Products } from "./entities/Products.js";
+import { Providers } from "./entities/Providers.js";
 /* entities */
-import { Roles } from "@/database/entities/Roles";
-import { Users } from "@/database/entities/Users";
-import { Client } from "./entities/Client";
-import { Historial } from "./entities/Historial";
-import { MaterialsList } from "./entities/MaterialsList";
-import { ProductionOrders } from "./entities/ProductionOrders";
-import { Products } from "./entities/Products";
-import { Providers } from "./entities/Providers";
+import { Roles } from "./entities/Roles.js";
+import { Users } from "./entities/Users.js";
 
 import { DB } from "@/constants";
 

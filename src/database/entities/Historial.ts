@@ -1,10 +1,10 @@
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
-import { Client } from "./Client";
-import { CoreEntity } from "./CoreEntity";
-import { ProductionOrders } from "./ProductionOrders";
-import { Products } from "./Products";
-import { Providers } from "./Providers";
+import { Client } from "./Client.js";
+import { CoreEntity } from "./CoreEntity.js";
+import { ProductionOrders } from "./ProductionOrders.js";
+import { Products } from "./Products.js";
+import { Providers } from "./Providers.js";
 
 export enum HistorialAction {
   INGRESO = "ingreso",

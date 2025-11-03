@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToMany } from "typeorm";
 
-import { CoreEntity } from "./CoreEntity";
-import { Products } from "./Products";
+import { CoreEntity } from "./CoreEntity.js";
+import { Products } from "./Products.js";
 
 @Entity()
 export class Providers extends CoreEntity {

@@ -1,6 +1,6 @@
 import { Column, Entity } from "typeorm";
 
-import { CoreEntity } from "./CoreEntity";
+import { CoreEntity } from "./CoreEntity.js";
 
 @Entity()
 export class Client extends CoreEntity {

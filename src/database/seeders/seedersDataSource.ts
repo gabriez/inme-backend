@@ -1,7 +1,7 @@
 import { DataSource } from "typeorm";
 
-import { dataSourceOptionsCommon } from "@/database/databaseConfig";
-import { CoreSeeder1649938942846 } from "./CoreSeders";
+import { dataSourceOptionsCommon } from "../databaseConfig.js";
+import { CoreSeeder1649938942846 } from "./CoreSeders.js";
 /* migrations */
 // import { CoreSeeder1649938942846 } from "./CoreSeders";
 

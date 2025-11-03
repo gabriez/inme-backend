@@ -21,20 +21,13 @@ echo "PostgreSQL está listo!"
 echo "Ejecutando migraciones..."
 
 # Ejecutar migraciones principales
-node ../node_modules/typeorm/cli.js migration:run -d ../src/database/appDataSource.js
+node node_modules/typeorm/cli.js migration:run -d dist/src/database/appDataSource.js
 
 echo "Migraciones ejecutadas exitosamente!"
 
-ls 
-
-ls ../
-
-ls /node_modules/typeorm/cli.js
-
-pwd
 # Ejecutar seeders (opcional, comentar si no se necesita)
 # echo " Ejecutando seeders..."
-node ../node_modules/typeorm/cli.js migration:run -d ../src/database/seeders/seedersDataSource.js
+node node_modules/typeorm/cli.js migration:run -d dist/src/database/seeders/seedersDataSource.js
 # echo "Seeders ejecutados exitosamente!"
 
 echo "Base de datos lista para usar!"

@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
-import { CoreEntity } from "./CoreEntity";
-import { Products } from "./Products";
+import { CoreEntity } from "./CoreEntity.js";
+import { Products } from "./Products.js";
 
 export enum OrderState {
   EnProceso = "En proceso",

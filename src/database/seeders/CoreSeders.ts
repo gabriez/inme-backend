@@ -1,8 +1,8 @@
 import type { MigrationInterface, QueryRunner } from "typeorm";
 
-import { rolesSeeder } from "./rolesSeeder";
+import { rolesSeeder } from "./rolesSeeder.js";
 /* seeders */
-import { userSeeder } from "./userSeeder";
+import { userSeeder } from "./userSeeder.js";
 
 export class CoreSeeder1649938942846 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
