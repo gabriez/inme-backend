@@ -29,7 +29,7 @@ services:
     #   - "5432:5432"
   backend:
     build:
-      context: ./inme-backend
+      context: .
       dockerfile: Dockerfile.prod
       target: production
 
@@ -56,7 +56,7 @@ services:
       # Volumen para archivos subidos (imágenes)
       - assets_data:/home/tmp/inme
       # Volumen para templates (si necesitas modificarlos sin rebuild)
-      - ./inme-backend/src/templates:/app/src/templates:ro
+      - ./src/templates:/app/src/templates:ro
 
     networks:
       - inme-network
