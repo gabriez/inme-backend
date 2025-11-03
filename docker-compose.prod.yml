@@ -52,6 +52,11 @@ services:
 
       # CORS
       CORS: ${CORS}
+
+      # admin user
+      USERNAME: ${USERNAME}
+      PASSWORD: ${PASSWORD}
+      EMAIL: ${EMAIL}
     volumes:
       # Volumen para archivos subidos (imágenes)
       - assets_data:/home/tmp/inme
