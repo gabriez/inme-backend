@@ -14,6 +14,7 @@ export const getProductWithRelations = async (id: number) => {
       existenciaReservada: true,
       existencia: true,
       planos: true,
+      imageUri: true,
       materialsList: {
         id: true,
         idProdComponenteId: true,

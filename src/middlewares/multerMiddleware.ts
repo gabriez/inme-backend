@@ -1,4 +1,5 @@
 import type { NextFunction } from "express";
+import type { ImageProducts } from "@/database/entities/Products";
 import type { RequestAPI, ResponseAPI } from "@/typescript/express";
 
 import path from "node:path";
@@ -42,15 +43,12 @@ const createMulterImages = (destination: string) => {
 };
 
 export const storeProductImages = async (
-  req: RequestAPI,
+  req: RequestAPI<{ imageUri?: ImageProducts }>,
   res: ResponseAPI,
   next: NextFunction,
 ) => {
   const now = dayjs();
-  const productsPath = path.join(
-    ROOT_DIRECTORY ?? "/home/tmp/inme",
-    PRODUCTS_IMAGES_PATH,
-  );
+  const productsPath = path.join(ROOT_DIRECTORY, PRODUCTS_IMAGES_PATH);
   const destination = path.join(productsPath, now.format("YYYY/MM/DD"));
   const upload = createMulterImages(destination).single("image");
   try {
@@ -74,6 +72,18 @@ export const storeProductImages = async (
             status: false,
           });
         }
+        if (!req.file) {
+          resolve(true);
+          return;
+        }
+
+        const imageUri: ImageProducts = {
+          height: 0,
+          uri: destination,
+          width: 0,
+        };
+        if (req.body) req.body.imageUri = imageUri;
+
         resolve(true);
       });
     });

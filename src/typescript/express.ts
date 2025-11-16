@@ -3,7 +3,7 @@ import type { ParamsDictionary, Query, Send } from "express-serve-static-core";
 import type { Client } from "@/database/entities/Client";
 import type { HistorialAction } from "@/database/entities/Historial";
 import type { OrderState } from "@/database/entities/ProductionOrders";
-import type { ProductType } from "@/database/entities/Products";
+import type { ImageProducts, ProductType } from "@/database/entities/Products";
 import type { Providers } from "@/database/entities/Providers";
 import type { Users } from "../database/entities/Users";
 export interface TypedResponse<ResBody> extends Response {
@@ -92,6 +92,7 @@ export interface ProductsReq {
   providersListParsed: ProvidersListProductsI[];
   materialsListParsed: MaterialsListProductsI[];
   providers: Providers[];
+  imageUri?: ImageProducts;
 }
 
 export interface UpdateProductExistenceI {

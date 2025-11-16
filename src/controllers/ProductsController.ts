@@ -116,6 +116,7 @@ export const CreateProductsController = async (
       productType,
       measureUnit,
       providers = [],
+      imageUri,
     } = req.body ?? {};
 
     const productByCode = await ProductsRepository.findOneBy({
@@ -137,6 +138,7 @@ export const CreateProductsController = async (
       measureUnit,
       existenciaReservada: 0,
       providers,
+      imageUri,
     });
 
     await ProductsRepository.save(product);
@@ -231,6 +233,7 @@ export const UpdateProductController = async (
       productType,
       measureUnit,
       providersListParsed = [],
+      imageUri,
     } = req.body;
 
     const productByCode = await ProductsRepository.findOneBy({
@@ -251,6 +254,7 @@ export const UpdateProductController = async (
       productType,
       measureUnit,
       providers: providersListParsed,
+      ...(imageUri ? { imageUri } : {}),
     });
 
     await ProductsRepository.save(product);
