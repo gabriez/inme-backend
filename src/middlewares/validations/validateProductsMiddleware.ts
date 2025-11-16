@@ -97,8 +97,8 @@ export function validateProductFields(
 
     const parse = validateProductsSchema.safeParse({
       codigo,
-      materialsList: req.body.materialsList,
-      providersList: req.body.providersList,
+      materialsList: materialsListParsed,
+      providersList: providersListParsed,
       measureUnit,
       planos,
       nombre,
