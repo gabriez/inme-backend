@@ -77,9 +77,12 @@ export const storeProductImages = async (
           return;
         }
 
+        const folder = destination.replace(ROOT_DIRECTORY, "");
+        const filename = req.file.filename;
+
         const imageUri: ImageProducts = {
           height: 0,
-          uri: destination,
+          uri: `${folder}/${filename}`,
           width: 0,
         };
         if (req.body) req.body.imageUri = imageUri;
